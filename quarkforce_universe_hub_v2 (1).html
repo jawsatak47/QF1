@@ -1,0 +1,730 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--color-background-tertiary);color:var(--color-text-primary)}
+.hub{display:flex;flex-direction:column}
+.nav{display:flex;align-items:center;gap:0;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);position:sticky;top:0;z-index:50;overflow-x:auto}
+.nav-logo{font-size:15px;font-weight:500;padding:0 16px;white-space:nowrap;border-right:0.5px solid var(--color-border-tertiary);height:44px;display:flex;align-items:center;flex-shrink:0}
+.nav-logo span{color:#7f77dd}
+.nav-items{display:flex;align-items:center}
+.nav-item{display:flex;align-items:center;gap:6px;padding:0 14px;height:44px;font-size:13px;cursor:pointer;color:var(--color-text-secondary);border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;border-right:0.5px solid var(--color-border-tertiary)}
+.nav-item:hover{color:var(--color-text-primary);background:var(--color-background-secondary)}
+.nav-item.active{color:#7f77dd;border-bottom-color:#7f77dd;background:var(--color-background-secondary)}
+.nav-item i{font-size:15px}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:8px;padding:0 14px;flex-shrink:0}
+.xp-pill{display:flex;align-items:center;gap:5px;font-size:12px;padding:4px 10px;border-radius:20px;background:#7f77dd18;color:#7f77dd;border:0.5px solid #7f77dd33;white-space:nowrap}
+.rank-pill{display:flex;align-items:center;gap:5px;font-size:12px;padding:4px 10px;border-radius:20px;background:var(--color-background-secondary);color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary);white-space:nowrap}
+.main{padding:20px}
+.sec{display:none}.sec.active{display:block}
+
+.hero-row{display:grid;grid-template-columns:1fr 280px;gap:12px;margin-bottom:16px}
+.hero-main{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:28px;position:relative;overflow:hidden}
+.hero-eyebrow{font-size:11px;letter-spacing:.1em;color:var(--color-text-tertiary);margin-bottom:6px}
+.hero-main h1{font-size:24px;font-weight:500;line-height:1.2;margin-bottom:8px}
+.hero-main h1 em{font-style:normal;color:#7f77dd}
+.hero-main p{font-size:13px;color:var(--color-text-secondary);line-height:1.65;margin-bottom:18px;max-width:400px}
+.hero-btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:7px 16px;border-radius:var(--border-radius-md);font-size:13px;cursor:pointer;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-primary);font-family:inherit;transition:all .15s}
+.btn:hover{background:var(--color-background-secondary)}
+.btn.p{background:#7f77dd;color:#fff;border-color:#7f77dd}.btn.p:hover{background:#534ab7}
+.btn.sm{padding:5px 12px;font-size:12px}
+.hero-glyph{position:absolute;right:24px;bottom:16px;font-size:80px;opacity:.05;line-height:1;user-select:none}
+.hero-side{display:flex;flex-direction:column;gap:12px}
+.hero-side-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px;cursor:pointer;transition:border-color .15s}
+.hero-side-card:hover{border-color:var(--color-border-secondary)}
+.hsc-label{font-size:10px;color:var(--color-text-tertiary);letter-spacing:.08em;margin-bottom:4px}
+.hsc-val{font-size:14px;font-weight:500}
+.hsc-sub{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+
+.shelf-label{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:10px;letter-spacing:.04em}
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:20px}
+.shelf-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px;cursor:pointer;transition:border-color .15s}
+.shelf-card:hover{border-color:var(--color-border-secondary)}
+.sc-icon{font-size:20px;margin-bottom:8px}
+.sc-icon i{font-size:20px}
+.sc-name{font-size:13px;font-weight:500;margin-bottom:3px}
+.sc-sub{font-size:11px;color:var(--color-text-secondary);line-height:1.5}
+.sc-tag{font-size:10px;padding:2px 7px;border-radius:20px;margin-top:7px;display:inline-block;background:var(--color-background-secondary);color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary)}
+
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;margin-bottom:20px}
+.stat{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px}
+.stat-n{font-size:20px;font-weight:500}
+.stat-l{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+
+.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.page-title{font-size:16px;font-weight:500}
+.page-sub{font-size:12px;color:var(--color-text-secondary)}
+
+.char-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:16px}
+.char-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px;cursor:pointer;transition:border-color .15s}
+.char-card:hover{border-color:#7f77dd55}
+.char-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:500;margin-bottom:10px}
+.char-name{font-size:14px;font-weight:500;margin-bottom:2px}
+.char-role{font-size:11px;color:var(--color-text-secondary)}
+.char-world{font-size:10px;padding:2px 7px;border-radius:20px;display:inline-block;margin-top:6px;background:#7f77dd15;color:#534ab7;border:0.5px solid #7f77dd25}
+
+.char-detail-wrap{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:24px;margin-bottom:16px}
+.cd-top{display:flex;align-items:flex-start;gap:16px;margin-bottom:16px}
+.cd-av{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:500;flex-shrink:0}
+.cd-meta h2{font-size:18px;font-weight:500;margin-bottom:3px}
+.cd-meta p{font-size:13px;color:var(--color-text-secondary)}
+.cd-tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:0.5px solid var(--color-border-tertiary);padding-bottom:0}
+.cd-tab{padding:6px 14px;font-size:12px;cursor:pointer;border-bottom:2px solid transparent;color:var(--color-text-secondary);transition:all .15s}
+.cd-tab.active{color:#7f77dd;border-bottom-color:#7f77dd}
+.cd-pane{display:none}.cd-pane.active{display:block}
+.powers-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.power{font-size:11px;padding:3px 8px;border-radius:20px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary)}
+.unlock-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:10px}
+.unlock-item{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px;text-align:center;font-size:11px;color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary)}
+.unlock-item i{font-size:20px;display:block;margin-bottom:4px;color:var(--color-text-tertiary)}
+.unlock-item.locked{opacity:.5}
+.ai-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:14px;font-size:13px;line-height:1.7;color:var(--color-text-secondary);margin-top:8px;min-height:44px}
+.ai-box.loading{color:var(--color-text-tertiary);font-style:italic}
+
+.zine-covers{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:16px}
+.zine-thumb{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px;cursor:pointer;transition:border-color .15s;text-align:center}
+.zine-thumb:hover{border-color:#7f77dd55}
+.zine-art{width:100%;aspect-ratio:3/4;border-radius:var(--border-radius-md);margin-bottom:8px;display:flex;align-items:center;justify-content:center;background:var(--color-background-secondary)}
+.zine-art i{font-size:28px;color:var(--color-text-tertiary)}
+.zine-num{font-size:10px;color:var(--color-text-tertiary)}
+.zine-tit{font-size:13px;font-weight:500}
+
+.reader-wrap{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:16px}
+.reader-topbar{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:0.5px solid var(--color-border-tertiary);flex-wrap:wrap;gap:10px}
+.reader-spread{display:grid;grid-template-columns:1fr 1fr}
+.reader-page{padding:20px;min-height:260px;font-size:12px;line-height:1.75;color:var(--color-text-secondary);position:relative}
+.reader-page:first-child{border-right:0.5px solid var(--color-border-tertiary)}
+.rp-head{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px}
+.rp-art{width:100%;height:64px;border-radius:var(--border-radius-md);display:flex;align-items:center;justify-content:center;margin:8px 0;background:var(--color-background-secondary)}
+.rp-art i{font-size:20px;color:var(--color-text-tertiary)}
+.pg-num{position:absolute;bottom:10px;font-size:10px;color:var(--color-text-tertiary)}
+.reader-page:first-child .pg-num{left:16px}
+.reader-page:last-child .pg-num{right:16px}
+.reader-bottom{padding:14px 20px;border-top:0.5px solid var(--color-border-tertiary)}
+.commentary-label{font-size:11px;color:var(--color-text-tertiary);margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.commentary-label i{font-size:13px}
+.char-link{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 8px;border-radius:20px;background:#7f77dd15;color:#534ab7;border:0.5px solid #7f77dd25;cursor:pointer;margin-top:8px}
+.char-link:hover{background:#7f77dd25}
+
+.qu-progress{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px;margin-bottom:16px}
+.progress-bar-wrap{height:8px;background:var(--color-background-secondary);border-radius:4px;margin:8px 0;overflow:hidden;border:0.5px solid var(--color-border-tertiary)}
+.progress-bar-fill{height:100%;background:#7f77dd;border-radius:4px;transition:width .5s}
+.rank-steps{display:flex;justify-content:space-between;font-size:10px;color:var(--color-text-tertiary);margin-top:4px}
+.rank-step.done{color:#7f77dd}
+.qu-schools{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:16px}
+.school{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px}
+.school-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.school-icon i{font-size:18px;color:#7f77dd}
+.school-name{font-size:14px;font-weight:500}
+.school-count{font-size:11px;color:var(--color-text-secondary)}
+.lesson-row{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-radius:var(--border-radius-md);font-size:12px;cursor:pointer;margin-bottom:4px;border:0.5px solid transparent}
+.lesson-row:hover{background:var(--color-background-secondary);border-color:var(--color-border-tertiary)}
+.lesson-row.premium{color:var(--color-text-tertiary)}
+.xp-tag{font-size:10px;color:#7f77dd;font-weight:500}
+.lock-tag{font-size:10px;color:var(--color-text-tertiary);display:flex;align-items:center;gap:3px}
+
+.challenge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:16px}
+.challenge-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px}
+.ch-status{font-size:10px;letter-spacing:.06em;margin-bottom:6px}
+.ch-status.live{color:#1d9e75}
+.ch-status.upcoming{color:#ef9f27}
+.ch-title{font-size:14px;font-weight:500;margin-bottom:4px}
+.ch-desc{font-size:12px;color:var(--color-text-secondary);line-height:1.55;margin-bottom:10px}
+.ch-rewards{display:flex;gap:6px;flex-wrap:wrap}
+.reward-tag{font-size:10px;padding:2px 7px;border-radius:20px;background:#7f77dd15;color:#534ab7;border:0.5px solid #7f77dd25}
+
+.cw-event{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:20px;margin-bottom:12px}
+.event-status{font-size:10px;letter-spacing:.08em;margin-bottom:4px}
+.event-status.done{color:#1d9e75}.event-status.upcoming{color:#7f77dd}
+.event-title{font-size:16px;font-weight:500;margin-bottom:4px}
+.event-meta{font-size:12px;color:var(--color-text-secondary);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.lb{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.lb-row{display:grid;grid-template-columns:32px 1fr auto auto;align-items:center;gap:10px;padding:9px 14px;border-bottom:0.5px solid var(--color-border-tertiary);font-size:13px}
+.lb-row:last-child{border-bottom:none}
+.lb-rank{text-align:center;font-size:11px;color:var(--color-text-tertiary)}
+.lb-rank.g{color:#ba7517;font-weight:500}
+.lb-badge{font-size:10px;padding:2px 7px;border-radius:20px;background:#7f77dd15;color:#534ab7}
+.lb-pts{font-weight:500}
+.sponsor-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.sp-tag{font-size:11px;padding:3px 8px;border-radius:20px;background:var(--color-background-secondary);color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary)}
+
+.music-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:16px}
+.track{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;cursor:pointer;transition:border-color .15s}
+.track:hover{border-color:var(--color-border-secondary)}
+.track-art{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:36px;position:relative}
+.track-art i.bg{font-size:36px;opacity:.3}
+.track-play{position:absolute;font-size:18px;opacity:0;transition:.15s;color:var(--color-background-primary)}
+.track:hover .track-play{opacity:1}
+.track-info{padding:10px 12px}
+.track-title{font-size:13px;font-weight:500;margin-bottom:2px}
+.track-sub{font-size:11px;color:var(--color-text-secondary)}
+.track-lore{font-size:10px;margin-top:4px;padding:2px 6px;border-radius:20px;display:inline-block;background:#7f77dd15;color:#534ab7}
+
+.oracle{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:18px;margin-bottom:16px}
+.oracle-head{font-size:13px;font-weight:500;margin-bottom:12px;display:flex;align-items:center;gap:7px;color:var(--color-text-primary)}
+.oracle-head i{color:#7f77dd;font-size:16px}
+.chat-row{display:flex;gap:8px;margin-bottom:12px}
+.chat-row input{flex:1;padding:8px 12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary);font-size:13px;font-family:inherit}
+.chat-row input::placeholder{color:var(--color-text-tertiary)}
+.msgs{display:flex;flex-direction:column;gap:8px;max-height:180px;overflow-y:auto}
+.msg-u{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 12px;font-size:13px;line-height:1.6;align-self:flex-end;max-width:80%}
+.msg-a{background:#7f77dd10;border:0.5px solid #7f77dd20;border-radius:var(--border-radius-md);padding:8px 12px;font-size:13px;line-height:1.6;color:var(--color-text-secondary);max-width:90%}
+.msg-load{font-size:13px;color:var(--color-text-tertiary);font-style:italic;padding:8px 0}
+
+@media(max-width:520px){
+.hero-row{grid-template-columns:1fr}
+.hero-side{display:none}
+.reader-spread{grid-template-columns:1fr}
+.reader-page:first-child{border-right:none;border-bottom:0.5px solid var(--color-border-tertiary)}
+}
+</style>
+
+<h2 class="sr-only">QuarkForce Universe Hub — interactive platform with characters, zines, courses, challenges, events, and music</h2>
+<div class="hub">
+<nav class="nav">
+  <div class="nav-logo">Quark<span>Force</span></div>
+  <div class="nav-items">
+    <div class="nav-item active" onclick="go('home')"><i class="ti ti-home" aria-hidden="true"></i> Home</div>
+    <div class="nav-item" onclick="go('chars')"><i class="ti ti-user-star" aria-hidden="true"></i> Characters</div>
+    <div class="nav-item" onclick="go('zines')"><i class="ti ti-book-2" aria-hidden="true"></i> QuarkZine</div>
+    <div class="nav-item" onclick="go('qu')"><i class="ti ti-school" aria-hidden="true"></i> QuarkUniversity</div>
+    <div class="nav-item" onclick="go('challenges')"><i class="ti ti-bolt" aria-hidden="true"></i> Challenges</div>
+    <div class="nav-item" onclick="go('cw')"><i class="ti ti-trophy" aria-hidden="true"></i> Canvas Wars</div>
+    <div class="nav-item" onclick="go('music')"><i class="ti ti-music" aria-hidden="true"></i> Music</div>
+  </div>
+  <div class="nav-right">
+    <div class="xp-pill"><i class="ti ti-star" aria-hidden="true" style="font-size:13px"></i> <span id="xp-display">0</span> XP</div>
+    <div class="rank-pill" id="rank-pill"><i class="ti ti-eye" aria-hidden="true" style="font-size:13px"></i> Observer</div>
+  </div>
+</nav>
+
+<div class="main">
+
+<!-- HOME -->
+<div id="sec-home" class="sec active">
+  <div class="hero-row">
+    <div class="hero-main">
+      <div class="hero-eyebrow">QuarkForce — Medford, OR</div>
+      <h1>Where creativity<br>becomes an <em>adventure.</em></h1>
+      <p>Art. Education. Music. Community. Events. IP. One living universe built by JawsAtak47 — enter through any door.</p>
+      <div class="hero-btns">
+        <button class="btn p" onclick="go('chars')">Explore the roster</button>
+        <button class="btn" onclick="go('zines')">Read QuarkZine</button>
+        <button class="btn" onclick="go('challenges')">Join a challenge</button>
+      </div>
+      <div class="hero-glyph">⬡</div>
+    </div>
+    <div class="hero-side">
+      <div class="hero-side-card" onclick="go('zines')">
+        <div class="hsc-label">Latest issue</div>
+        <div class="hsc-val">QuarkZine — Issue 06</div>
+        <div class="hsc-sub">Sound &amp; Vision · Available now</div>
+      </div>
+      <div class="hero-side-card" onclick="go('chars')">
+        <div class="hsc-label">Featured character</div>
+        <div class="hsc-val">BlackPacalyps</div>
+        <div class="hsc-sub">Monster Island · Protagonist</div>
+      </div>
+      <div class="hero-side-card" onclick="go('challenges')">
+        <div class="hsc-label">Live challenge</div>
+        <div class="hsc-val">MonsTober Mascot Vote</div>
+        <div class="hsc-sub">Draw a monster · 200 XP</div>
+      </div>
+      <div class="hero-side-card" onclick="go('cw')">
+        <div class="hsc-label">Upcoming event</div>
+        <div class="hsc-val">Canvas Wars: MonsTober</div>
+        <div class="hsc-sub">October · Medford, OR · All ages</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat"><div class="stat-n">12</div><div class="stat-l">Characters</div></div>
+    <div class="stat"><div class="stat-n">6+</div><div class="stat-l">Zine issues</div></div>
+    <div class="stat"><div class="stat-n">160</div><div class="stat-l">QU classes</div></div>
+    <div class="stat"><div class="stat-n">2</div><div class="stat-l">Worlds</div></div>
+    <div class="stat"><div class="stat-n">$500</div><div class="stat-l">Prize pool</div></div>
+  </div>
+
+  <div class="shelf-label">Explore the universe</div>
+  <div class="shelf">
+    <div class="shelf-card" onclick="go('chars')">
+      <div class="sc-icon" style="color:#7f77dd"><i class="ti ti-user-star" aria-hidden="true"></i></div>
+      <div class="sc-name">Characters</div>
+      <div class="sc-sub">Full bios, origins, powers, and unlockable content per character.</div>
+      <div class="sc-tag">12 in roster</div>
+    </div>
+    <div class="shelf-card" onclick="go('zines')">
+      <div class="sc-icon" style="color:#d85a30"><i class="ti ti-book-2" aria-hidden="true"></i></div>
+      <div class="sc-name">QuarkZine</div>
+      <div class="sc-sub">Digital reader with commentary, character links, and audio per issue.</div>
+      <div class="sc-tag">6 issues archived</div>
+    </div>
+    <div class="shelf-card" onclick="go('qu')">
+      <div class="sc-icon" style="color:#1d9e75"><i class="ti ti-school" aria-hidden="true"></i></div>
+      <div class="sc-name">QuarkUniversity</div>
+      <div class="sc-sub">Graffiti, letters, sign painting, character design, business for artists.</div>
+      <div class="sc-tag">Free + Premium</div>
+    </div>
+    <div class="shelf-card" onclick="go('challenges')">
+      <div class="sc-icon" style="color:#ef9f27"><i class="ti ti-bolt" aria-hidden="true"></i></div>
+      <div class="sc-name">Challenges</div>
+      <div class="sc-sub">Weekly missions. Earn XP, badges, and featured placement.</div>
+      <div class="sc-tag">3 live now</div>
+    </div>
+    <div class="shelf-card" onclick="go('cw')">
+      <div class="sc-icon" style="color:#d4537e"><i class="ti ti-trophy" aria-hidden="true"></i></div>
+      <div class="sc-name">Canvas Wars</div>
+      <div class="sc-sub">Events, results, galleries, and the MonsTober art show.</div>
+      <div class="sc-tag">Year 2 coming</div>
+    </div>
+    <div class="shelf-card" onclick="go('music')">
+      <div class="sc-icon" style="color:#378add"><i class="ti ti-music" aria-hidden="true"></i></div>
+      <div class="sc-name">Music</div>
+      <div class="sc-sub">JawsAtak47 discography — every track is universe lore.</div>
+      <div class="sc-tag">JawsAtak47</div>
+    </div>
+  </div>
+
+  <div class="oracle">
+    <div class="oracle-head"><i class="ti ti-sparkles" aria-hidden="true"></i> QuarkForce Oracle — ask anything about the universe</div>
+    <div class="chat-row">
+      <input type="text" id="oracle-q" placeholder="Who is BlackPacalyps? What is Monster Island? How does Canvas Wars work?" onkeydown="if(event.key==='Enter')chat('oracle')">
+      <button class="btn p" onclick="chat('oracle')">Ask ↗</button>
+    </div>
+    <div class="msgs" id="oracle-msgs"></div>
+  </div>
+</div>
+
+<!-- CHARACTERS -->
+<div id="sec-chars" class="sec">
+  <div id="chars-list-view">
+    <div class="page-header">
+      <div><div class="page-title">Character roster</div><div class="page-sub">Tap any character to explore their full profile</div></div>
+    </div>
+    <div class="char-grid" id="char-grid"></div>
+  </div>
+  <div id="chars-detail-view" style="display:none">
+    <button class="btn sm" onclick="closeCharDetail()" style="margin-bottom:14px"><i class="ti ti-arrow-left" aria-hidden="true" style="font-size:12px;margin-right:4px"></i>Back to roster</button>
+    <div class="char-detail-wrap">
+      <div class="cd-top">
+        <div id="cd-av" class="cd-av"></div>
+        <div class="cd-meta">
+          <h2 id="cd-name"></h2>
+          <p id="cd-role"></p>
+          <p id="cd-world" style="font-size:11px;margin-top:4px"></p>
+        </div>
+      </div>
+      <div class="cd-tabs">
+        <div class="cd-tab active" onclick="cdTab('profile')">Profile</div>
+        <div class="cd-tab" onclick="cdTab('media')">Media</div>
+        <div class="cd-tab" onclick="cdTab('unlockables')">Unlockables</div>
+        <div class="cd-tab" onclick="cdTab('lore')">AI lore</div>
+      </div>
+      <div id="cdp-profile" class="cd-pane active">
+        <div id="cd-powers" class="powers-row"></div>
+        <div id="cd-bio" style="font-size:13px;line-height:1.7;color:var(--color-text-secondary)"></div>
+        <div style="margin-top:12px;font-size:12px;color:var(--color-text-tertiary)">Appears in</div>
+        <div id="cd-appears" style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"></div>
+      </div>
+      <div id="cdp-media" class="cd-pane">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px">
+          <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px;text-align:center;font-size:12px;color:var(--color-text-secondary)"><i class="ti ti-file-text" aria-hidden="true" style="font-size:20px;display:block;margin-bottom:6px;color:var(--color-text-tertiary)"></i>Comics</div>
+          <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px;text-align:center;font-size:12px;color:var(--color-text-secondary)"><i class="ti ti-player-play" aria-hidden="true" style="font-size:20px;display:block;margin-bottom:6px;color:var(--color-text-tertiary)"></i>Audio log</div>
+          <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px;text-align:center;font-size:12px;color:var(--color-text-secondary)"><i class="ti ti-video" aria-hidden="true" style="font-size:20px;display:block;margin-bottom:6px;color:var(--color-text-tertiary)"></i>Clips</div>
+        </div>
+      </div>
+      <div id="cdp-unlockables" class="cd-pane">
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:10px">Earn XP to unlock bonus content for this character.</div>
+        <div class="unlock-grid" id="cd-unlocks"></div>
+      </div>
+      <div id="cdp-lore" class="cd-pane">
+        <div style="font-size:11px;color:var(--color-text-tertiary);margin-bottom:6px">AI-generated lore expansion — powered by Claude</div>
+        <div id="cd-ai" class="ai-box loading">Loading lore...</div>
+        <button class="btn sm" style="margin-top:10px" onclick="goDeeper()">Go deeper ↗</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUARKZINE -->
+<div id="sec-zines" class="sec">
+  <div id="zine-library">
+    <div class="page-header">
+      <div><div class="page-title">QuarkZine — digital archive</div><div class="page-sub">Tap an issue to open the reader</div></div>
+      <button class="btn p">QuarkPass $8/mo</button>
+    </div>
+    <div class="zine-covers" id="zine-covers"></div>
+  </div>
+  <div id="zine-reader" style="display:none">
+    <button class="btn sm" onclick="closeReader()" style="margin-bottom:14px"><i class="ti ti-arrow-left" aria-hidden="true" style="font-size:12px;margin-right:4px"></i>Back to archive</button>
+    <div class="reader-wrap">
+      <div class="reader-topbar">
+        <div>
+          <div style="font-size:10px;color:var(--color-text-tertiary);margin-bottom:2px" id="r-num"></div>
+          <div style="font-size:15px;font-weight:500" id="r-title"></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button class="btn sm" onclick="pg(-1)"><i class="ti ti-arrow-left" aria-hidden="true" style="font-size:12px"></i></button>
+          <span style="font-size:12px;color:var(--color-text-secondary)" id="r-pg-lbl">Spread 1</span>
+          <button class="btn sm" onclick="pg(1)"><i class="ti ti-arrow-right" aria-hidden="true" style="font-size:12px"></i></button>
+        </div>
+      </div>
+      <div class="reader-spread">
+        <div class="reader-page" id="r-left"></div>
+        <div class="reader-page" id="r-right"></div>
+      </div>
+      <div class="reader-bottom">
+        <div class="commentary-label"><i class="ti ti-notes" aria-hidden="true"></i> Creator commentary</div>
+        <div id="r-commentary" class="ai-box loading">Opening issue...</div>
+        <div id="r-charlinks" style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QU -->
+<div id="sec-qu" class="sec">
+  <div class="page-header">
+    <div><div class="page-title">QuarkUniversity</div><div class="page-sub">10 schools · 160 classes · Art + Business + Worldbuilding</div></div>
+    <button class="btn p">QU+ $20/mo</button>
+  </div>
+
+  <div class="qu-progress">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <div style="font-size:13px;font-weight:500">Your progress</div>
+      <div style="font-size:12px;color:#7f77dd"><span id="qu-xp">0</span> XP earned</div>
+    </div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="qu-bar" style="width:0%"></div></div>
+    <div class="rank-steps">
+      <span class="rank-step" id="rs-0">Observer</span>
+      <span class="rank-step" id="rs-1">Explorer</span>
+      <span class="rank-step" id="rs-2">Creator</span>
+      <span class="rank-step" id="rs-3">Builder</span>
+      <span class="rank-step" id="rs-4">QuarkMaster</span>
+    </div>
+  </div>
+
+  <div class="qu-schools" id="qu-schools-grid"></div>
+
+  <div class="oracle">
+    <div class="oracle-head"><i class="ti ti-robot" aria-hidden="true"></i> QU Tutor — ask any art or business question</div>
+    <div class="chat-row">
+      <input type="text" id="tutor-q" placeholder="How do I get consistent bubble letters? How should I price commissions?" onkeydown="if(event.key==='Enter')chat('tutor')">
+      <button class="btn p" onclick="chat('tutor')">Ask ↗</button>
+    </div>
+    <div class="msgs" id="tutor-msgs"></div>
+  </div>
+</div>
+
+<!-- CHALLENGES -->
+<div id="sec-challenges" class="sec">
+  <div class="page-header">
+    <div><div class="page-title">Challenges</div><div class="page-sub">Weekly missions — earn XP, badges, and featured placement</div></div>
+  </div>
+  <div class="challenge-grid" id="challenge-grid"></div>
+</div>
+
+<!-- CANVAS WARS -->
+<div id="sec-cw" class="sec">
+  <div class="page-header">
+    <div><div class="page-title">Canvas Wars</div><div class="page-sub">The flagship QuarkForce competition event</div></div>
+    <button class="btn p">Register for Year 2</button>
+  </div>
+
+  <div class="cw-event">
+    <div class="event-status done">COMPLETED · YEAR 1</div>
+    <div class="event-title">Canvas Wars Year 1</div>
+    <div class="event-meta"><i class="ti ti-map-pin" aria-hidden="true" style="font-size:12px"></i> Bear Creek Park · Timeless Treasures Hub · June 6</div>
+    <div class="lb">
+      <div class="lb-row"><div class="lb-rank g">1</div><div style="font-weight:500">Miles</div><div class="lb-badge">Champion</div><div class="lb-pts">8 pts</div></div>
+      <div class="lb-row"><div class="lb-rank">2</div><div>Runner-up</div><div></div><div class="lb-pts">—</div></div>
+      <div class="lb-row"><div class="lb-rank">3</div><div>Third place</div><div></div><div class="lb-pts">—</div></div>
+    </div>
+    <div class="sponsor-row">
+      <span class="sp-tag">LifeArt</span><span class="sp-tag">Oh's Osaka</span><span class="sp-tag">Timeless Treasures</span><span class="sp-tag">Central Art</span><span class="sp-tag">Blick</span><span class="sp-tag">Rosemary &amp; Co</span><span class="sp-tag">PPG</span>
+    </div>
+  </div>
+
+  <div class="cw-event" style="border-color:#7f77dd44">
+    <div class="event-status upcoming">UPCOMING · OCTOBER</div>
+    <div class="event-title">Canvas Wars: MonsTober</div>
+    <div class="event-meta"><i class="ti ti-map-pin" aria-hidden="true" style="font-size:12px"></i> Multi-venue crawl · Medford, OR · All ages</div>
+    <div style="font-size:13px;color:var(--color-text-secondary);line-height:1.6;margin-bottom:14px">Month-long monster/creature art show · ~$500 prize pool · Community mascot vote · Timeless Treasures as hub</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn p" onclick="sendPrompt('Help me plan Canvas Wars MonsTober in full — venue crawl logistics, mascot contest structure, prize pool breakdown, sponsor deck, and promotional calendar')">Plan MonsTober ↗</button>
+      <button class="btn sm" onclick="sendPrompt('Write the MonsTober call-for-artists announcement')">Write announcement ↗</button>
+    </div>
+  </div>
+</div>
+
+<!-- MUSIC -->
+<div id="sec-music" class="sec">
+  <div class="page-header">
+    <div><div class="page-title">Music division — JawsAtak47</div><div class="page-sub">Every track is universe lore. Bay Area + Detroit roots. Medford production.</div></div>
+  </div>
+  <div class="music-grid" id="music-grid"></div>
+  <div class="oracle">
+    <div class="oracle-head"><i class="ti ti-microphone" aria-hidden="true"></i> Music archivist — ask about the discography or lore connections</div>
+    <div class="chat-row">
+      <input type="text" id="music-q" placeholder="How does this album connect to Monster Island? What influenced the production?" onkeydown="if(event.key==='Enter')chat('music')">
+      <button class="btn p" onclick="chat('music')">Ask ↗</button>
+    </div>
+    <div class="msgs" id="music-msgs"></div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<script>
+const CHARS=[
+  {name:'BlackPacalyps',role:'Protagonist · Force of reckoning',world:'Monster Island',col:'#7f77dd',bg:'#7f77dd18',powers:['Apocalyptic energy','Urban warfare','Cultural memory'],bio:'The central force of the QuarkForce universe. BlackPacalyps channels the raw energy of the streets, carrying the weight of culture and survival into every conflict on Monster Island.',appears:['Issue 01','Issue 02','Issue 04'],allies:['Marvelous Wonderful'],enemies:[]},
+  {name:'TinySquatchMan',role:'Scout · Underestimated wildcard',world:'Monster Island',col:'#1d9e75',bg:'#1d9e7518',powers:['Stealth','Terrain mastery','Cryptid speed'],bio:'Small in stature, massive in impact. TinySquatchMan moves through Monster Island like a ghost — gathering intel and striking when least expected.',appears:['Issue 01','Issue 04'],allies:[],enemies:[]},
+  {name:'Lepton Mu',role:'Quantum entity · Knowledge keeper',world:'Neon Waterplant',col:'#378add',bg:'#378add18',powers:['Quantum phase','Dimensional sight','Memory absorption'],bio:'Born from the particle overflow of Neon Waterplant, Lepton Mu exists in multiple states simultaneously — part archivist, part weapon.',appears:['Issue 03','Issue 04'],allies:['Bugaboo'],enemies:[]},
+  {name:'Cockroach Lady',role:'Survivor · Street strategist',world:'Monster Island',col:'#d85a30',bg:'#d85a3018',powers:['Unkillable resilience','Adaptation','Network intelligence'],bio:'The ultimate survivor. Cockroach Lady has outlasted every system designed to erase her, building intelligence networks through Monster Island\'s underbelly.',appears:['Issue 02','Issue 04'],allies:[],enemies:[]},
+  {name:'Xiangba',role:'Ancient guardian · Duality entity',world:'Monster Island',col:'#ef9f27',bg:'#ef9f2718',powers:['Ancient force','Duality shift','Cultural bridge'],bio:'An ancient entity whose power predates the current age of Monster Island. Xiangba embodies duality — protection and destruction as the same force.',appears:['Issue 04','Issue 06'],allies:['Bugaboo'],enemies:[]},
+  {name:'Bugaboo',role:'Chaos agent · Unpredictable wildcard',world:'Neon Waterplant',col:'#d4537e',bg:'#d4537e18',powers:['Chaotic energy','Reality distortion','Swarm command'],bio:'No one fully understands Bugaboo\'s allegiance. Operating from Neon Waterplant, Bugaboo introduces chaos as creative force — disruption as art.',appears:['Issue 03','Issue 04'],allies:['Lepton Mu','Xiangba'],enemies:[]},
+  {name:'Marvelous Wonderful',role:'Chief Narrator · Trickster guide',world:'Both worlds',col:'#7f77dd',bg:'#7f77dd12',powers:['Narrative control','Fourth-wall access','Reality editing'],bio:'The Bugs Bunny of the QuarkForce universe. Marvelous Wonderful narrates the story from inside it — breaking rules that don\'t serve the world.',appears:['Issue 01','Issue 02','Issue 03','Issue 04','Issue 05','Issue 06'],allies:['BlackPacalyps'],enemies:[]},
+  {name:'Duct TapeMan',role:'Builder · Improvised hero',world:'Monster Island',col:'#888780',bg:'#88878018',powers:['Structural mastery','Rapid improvisation','Binding force'],bio:'Duct TapeMan holds things together when everything falls apart. Equal parts engineer and warrior, built from whatever the streets left behind.',appears:['Issue 04'],allies:[],enemies:[]},
+  {name:'Infinite Infant',role:'Origin force · Pure potential',world:'Neon Waterplant',col:'#639922',bg:'#63992218',powers:['Unlimited potential','Reality seeding','Origin energy'],bio:'The Infinite Infant represents pure beginning — a force of creation so powerful its existence reshapes the physics of Neon Waterplant.',appears:['Issue 03','Issue 04'],allies:[],enemies:[]},
+];
+
+const ZINES=[
+  {num:'Issue 01',title:'Origins',col:'#7f77dd',chars:['BlackPacalyps','TinySquatchMan','Marvelous Wonderful'],spreads:[
+    {lh:'Welcome to Monster Island',lb:'The first transmission from the QuarkForce universe. This issue introduces the terrain, the rules, and the entities that define what it means to exist here.\n\nBlackPacalyps emerges from static. TinySquatchMan maps the perimeter.',rh:'Character zero',rb:'Before the roster had names, there was a mark. A tag. A signal in the noise.\n\nThis is where QuarkForce began — not with a plan, but with a compulsion to make something real from nothing.',commentary:'The first issue was never supposed to be a manifesto — it just became one. Every zine I\'ve made since has this one\'s DNA in it.'},
+    {lh:'The grid',lb:'Monster Island operates on invisible geometry. Every territory, every alley, every contested wall follows a logic that outsiders can\'t read.',rh:'Dispatch from the underground',rb:'JawsAtak47 writes from the studio:\n\n"I\'ve been building this world for 20 years without knowing it. Every tag, every character sketch, every beat was a page in this zine."',commentary:'The grid page was drawn on the back of a receipt. Some of the best layouts start that way — constraint forces clarity.'},
+  ]},
+  {num:'Issue 02',title:'Monster Island',col:'#d85a30',chars:['Cockroach Lady','BlackPacalyps','Marvelous Wonderful'],spreads:[
+    {lh:'Terrain report',lb:'Monster Island is not a metaphor. It is a living system — part city, part wilderness, part memory.\n\nThe territory shifts with the population\'s belief. When enough entities believe a wall exists, it does.',rh:'Cockroach Lady speaks',rb:'"I\'ve been here since before the current age. I\'ve watched three generations of heroes get erased.\n\nSurvival isn\'t passive. It\'s the most radical act of resistance."',commentary:'Cockroach Lady\'s dialogue in this spread came out in one sitting. I didn\'t edit it. Some characters just know what they want to say.'},
+  ]},
+  {num:'Issue 03',title:'Neon Waterplant',col:'#378add',chars:['Lepton Mu','Bugaboo','Infinite Infant'],spreads:[
+    {lh:'The second world',lb:'Neon Waterplant runs parallel to Monster Island — a bioluminescent environment where the physics of creativity operate differently.\n\nLepton Mu was born here. Bugaboo feeds here.',rh:'Signal and noise',rb:'In Neon Waterplant, every sound is information. The ambient hum carries encoded messages from Lepton Mu to entities who know how to listen.',commentary:'Building a second world forced me to think about what Monster Island actually was. Contrast is how you understand both.'},
+  ]},
+  {num:'Issue 04',title:'The Roster',col:'#1d9e75',chars:['BlackPacalyps','TinySquatchMan','Lepton Mu','Cockroach Lady','Xiangba','Bugaboo'],spreads:[
+    {lh:'Full roster drop',lb:'Issue 04 is the definitive character compendium. Every entity, every power, every origin story compressed into a single zine.\n\nThe IP universe goes fully public.',rh:'Powers and hierarchies',rb:'No single character controls the QuarkForce universe. The power balance shifts with narrative gravity — who needs to be right, right now, is who holds the most power.',commentary:'This issue was the hardest to write and the easiest to design. When you\'ve been living with characters for 20 years, describing them is actually the challenge.'},
+  ]},
+  {num:'Issue 05',title:'Canvas Wars',col:'#ef9f27',chars:['Marvelous Wonderful'],spreads:[
+    {lh:'Art as combat',lb:'Canvas Wars is not competition for its own sake. It is a structured ritual for proving what art can do under pressure, in public, with stakes.\n\nYear 1 happened. Miles won. The next round is already forming.',rh:'From the event floor',rb:'Sponsor row. Snow cones. Gold leaf trophies hand-crafted for the occasion.\n\nThis is what a community art event looks like when the organizer actually cares about every detail.',commentary:'I built those trophies myself. Gold leaf, epoxy, wood. Nobody asked me to go that hard. That\'s the only way I know how to do it.'},
+  ]},
+  {num:'Issue 06',title:'Sound & Vision',col:'#d4537e',chars:['BlackPacalyps','Xiangba'],spreads:[
+    {lh:'Music as lore',lb:'The JawsAtak47 discography is not background music to the QuarkForce universe.\n\nIt is the universe. Every track maps to a location, a character, an event.',rh:'Production notes',rb:'Bay Area influence meets Pacific Northwest production. Mac Dre\'s ghost is in the 808. Mistah FAB\'s energy is in the delivery. Detroit precision keeps it structural.',commentary:'Issue 06 was the hardest to pitch to people. "What does sound look like?" Turns out it looks like this — like the universe breathing.'},
+  ]},
+];
+
+const QU_SCHOOLS=[
+  {name:'School of Marks',icon:'ti-pencil',courses:[{n:'Freeform mark-making',xp:50,free:true},{n:'Tags to throwies',xp:75,free:true},{n:'Bubble letters',xp:100,free:true},{n:'Wildstyle fundamentals',xp:150,free:false},{n:'Character bombs',xp:200,free:false}]},
+  {name:'School of Letters',icon:'ti-typography',courses:[{n:'Block letters',xp:75,free:true},{n:'Sign painting basics',xp:100,free:true},{n:'3D letter construction',xp:125,free:false},{n:'Gold leaf technique',xp:175,free:false},{n:'Vintage signage styles',xp:200,free:false}]},
+  {name:'School of Characters',icon:'ti-user-star',courses:[{n:'Character design basics',xp:100,free:true},{n:'IP development',xp:150,free:false},{n:'Power systems',xp:150,free:false},{n:'World-building',xp:200,free:false},{n:'Character bibles',xp:250,free:false}]},
+  {name:'School of Color',icon:'ti-palette',courses:[{n:'Color theory for murals',xp:75,free:true},{n:'Spray paint control',xp:100,free:true},{n:'Blending techniques',xp:125,free:false},{n:'Palette building',xp:150,free:false}]},
+  {name:'School of Business',icon:'ti-briefcase',courses:[{n:'Pricing your work',xp:100,free:true},{n:'Commission intake',xp:100,free:true},{n:'Email marketing',xp:125,free:false},{n:'Social media strategy',xp:150,free:false},{n:'Grant writing',xp:200,free:false}]},
+  {name:'School of Story',icon:'ti-book',courses:[{n:'Zine production',xp:100,free:true},{n:'Comic panel structure',xp:125,free:false},{n:'World lore writing',xp:150,free:false},{n:'Character arcs',xp:175,free:false}]},
+];
+
+const CHALLENGES=[
+  {status:'live',title:'MonsTober mascot contest',desc:'Design an original monster or creature character. Could become the official MonsTober mascot — community vote decides.',xp:200,rewards:['200 XP','Featured placement','Mascot badge']},
+  {status:'live',title:'Throwie mission',desc:'Transform a simple tag into a full throwie. Document your process — sketch, practice runs, final piece.',xp:150,rewards:['150 XP','Graffiti badge','QU credit']},
+  {status:'live',title:'Character remix',desc:'Take any QuarkForce character and reimagine them in a new environment or time period. Your interpretation, your style.',xp:175,rewards:['175 XP','Collab badge','Character feature']},
+  {status:'upcoming',title:'TinySquatch challenge',desc:'Draw TinySquatchMan doing something completely unexpected. The more absurd the scenario, the better.',xp:125,rewards:['125 XP','Scout badge']},
+  {status:'upcoming',title:'Monster Island map',desc:'Create your own map of Monster Island. Add new territories, landmark locations, or contested zones.',xp:200,rewards:['200 XP','Cartographer badge','Lore archive feature']},
+];
+
+const TRACKS=[
+  {title:'Monster Island theme',lore:'Main title',con:'Opening theme of the universe — sets the terrain.',col:'#7f77dd'},
+  {title:'Cockroach protocol',lore:'Survival anthem',con:'Cockroach Lady\'s leitmotif. Unmovable 808.',col:'#d85a30'},
+  {title:'Neon frequency',lore:'Waterplant signal',con:'Lepton Mu\'s transmission. Ambient noise as data.',col:'#378add'},
+  {title:'Gold leaf dreams',lore:'Sign painter tribute',con:'LA Trade Tech years. Doc Guthrie in the mix.',col:'#ef9f27'},
+  {title:'Bay to Rogue',lore:'Migration track',con:'The move from Bay Area to Medford. Mac Dre influence.',col:'#1d9e75'},
+  {title:'Canvas Wars anthem',lore:'Event soundtrack',con:'Built to play while paint hits canvas.',col:'#d4537e'},
+];
+
+const RANKS=[{name:'Observer',min:0},{name:'Explorer',min:200},{name:'Creator',min:500},{name:'Builder',min:900},{name:'QuarkMaster',min:1500}];
+
+let xp=0,currentChar=null,currentZine=null,currentSpread=0;
+
+function go(id){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  const ids=['home','chars','zines','qu','challenges','cw','music'];
+  const ni=document.querySelectorAll('.nav-item');
+  const idx=ids.indexOf(id);
+  if(idx>=0)ni[idx].classList.add('active');
+}
+
+function addXP(n){
+  xp+=n;
+  document.getElementById('xp-display').textContent=xp;
+  document.getElementById('qu-xp').textContent=xp;
+  const rank=RANKS.filter(r=>xp>=r.min).pop();
+  const nextRank=RANKS.find(r=>r.min>xp);
+  const pct=nextRank?Math.round((xp-rank.min)/(nextRank.min-rank.min)*100):100;
+  document.getElementById('qu-bar').style.width=pct+'%';
+  const icons=['ti-eye','ti-compass','ti-brush','ti-hammer','ti-crown'];
+  const rankIdx=RANKS.indexOf(rank);
+  document.getElementById('rank-pill').innerHTML=`<i class="ti ${icons[rankIdx]}" aria-hidden="true" style="font-size:13px"></i> ${rank.name}`;
+  RANKS.forEach((r,i)=>{const el=document.getElementById('rs-'+i);if(el){el.className='rank-step'+(xp>=r.min?' done':'');}});
+}
+
+function buildChars(){
+  const g=document.getElementById('char-grid');
+  CHARS.forEach((c,i)=>{
+    const d=document.createElement('div');d.className='char-card';
+    d.innerHTML=`<div class="char-av" style="background:${c.bg};color:${c.col}">${c.name[0]}</div><div class="char-name">${c.name}</div><div class="char-role">${c.role}</div><div class="char-world">${c.world}</div>`;
+    d.onclick=()=>openChar(i);g.appendChild(d);
+  });
+}
+
+async function openChar(i){
+  currentChar=CHARS[i];
+  document.getElementById('chars-list-view').style.display='none';
+  document.getElementById('chars-detail-view').style.display='block';
+  document.getElementById('cd-av').style.cssText=`width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:500;flex-shrink:0;background:${currentChar.bg};color:${currentChar.col}`;
+  document.getElementById('cd-av').textContent=currentChar.name[0];
+  document.getElementById('cd-name').textContent=currentChar.name;
+  document.getElementById('cd-role').textContent=currentChar.role;
+  document.getElementById('cd-world').textContent='World: '+currentChar.world;
+  document.getElementById('cd-powers').innerHTML=currentChar.powers.map(p=>`<span class="power">${p}</span>`).join('');
+  document.getElementById('cd-bio').textContent=currentChar.bio;
+  document.getElementById('cd-appears').innerHTML=currentChar.appears.map(a=>`<span style="font-size:11px;padding:2px 7px;border-radius:20px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary)">${a}</span>`).join('');
+  document.getElementById('cd-unlocks').innerHTML=[
+    {icon:'ti-photo',label:'Wallpaper',locked:xp<100},
+    {icon:'ti-pencil',label:'Process sketches',locked:xp<200},
+    {icon:'ti-microphone',label:'Audio log',locked:xp<350},
+    {icon:'ti-notes',label:'Creator notes',locked:xp<500},
+  ].map(u=>`<div class="unlock-item${u.locked?' locked':''}"><i class="ti ${u.icon}" aria-hidden="true"></i>${u.label}${u.locked?'<br><span style="font-size:9px;color:var(--color-text-tertiary)">Earn XP to unlock</span>':''}</div>`).join('');
+  cdTab('profile');
+  const aiEl=document.getElementById('cd-ai');
+  aiEl.className='ai-box loading';aiEl.textContent='Loading lore...';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system:'You are the lore keeper of the QuarkForce universe — a gritty, imaginative IP world created by artist JawsAtak47 (Anthony Vella), rooted in graffiti, hip-hop (Mac Dre, Mistah FAB, Payroll Giovanni), street art, and 20+ years of independent creative practice. Worlds: Monster Island and Neon Waterplant. Write vivid, editorial lore in 3-4 sentences. No preamble.',messages:[{role:'user',content:`Expand the lore for QuarkForce character: ${currentChar.name}. Role: ${currentChar.role}. World: ${currentChar.world}. Powers: ${currentChar.powers.join(', ')}. Bio: ${currentChar.bio} Go deeper — their inner conflict, their relationship to the universe, what they protect or threaten.`}]})});
+    const d=await r.json();aiEl.className='ai-box';aiEl.textContent=d.content?.[0]?.text||'Lore unavailable.';
+    addXP(25);
+  }catch(e){aiEl.className='ai-box';aiEl.textContent='Lore signal lost. Try again.'}
+}
+
+function cdTab(id){
+  document.querySelectorAll('.cd-tab').forEach((t,i)=>{
+    const ids=['profile','media','unlockables','lore'];
+    t.className='cd-tab'+(ids[i]===id?' active':'');
+    document.getElementById('cdp-'+ids[i]).className='cd-pane'+(ids[i]===id?' active':'');
+  });
+}
+
+function closeCharDetail(){
+  document.getElementById('chars-detail-view').style.display='none';
+  document.getElementById('chars-list-view').style.display='block';
+}
+
+function goDeeper(){
+  if(currentChar)sendPrompt(`Tell me more about ${currentChar.name} in the QuarkForce universe — their full origin, what they want most, who they conflict with, and how they connect to the other characters`);
+}
+
+function buildZines(){
+  const g=document.getElementById('zine-covers');
+  ZINES.forEach((z,i)=>{
+    const d=document.createElement('div');d.className='zine-thumb';
+    d.innerHTML=`<div class="zine-art" style="background:${z.col}18"><i class="ti ti-book-2" aria-hidden="true" style="color:${z.col};font-size:28px"></i></div><div class="zine-num">${z.num}</div><div class="zine-tit">${z.title}</div>`;
+    d.onclick=()=>openZine(i);g.appendChild(d);
+  });
+}
+
+async function openZine(i){
+  currentZine=i;currentSpread=0;
+  document.getElementById('zine-library').style.display='none';
+  document.getElementById('zine-reader').style.display='block';
+  renderSpread();addXP(30);
+}
+
+function renderSpread(){
+  const z=ZINES[currentZine];const s=z.spreads[currentSpread]||z.spreads[0];
+  document.getElementById('r-num').textContent=z.num;
+  document.getElementById('r-title').textContent=z.title;
+  document.getElementById('r-pg-lbl').textContent=`Spread ${currentSpread+1} of ${z.spreads.length}`;
+  document.getElementById('r-left').innerHTML=`<div class="rp-head">${s.lh}</div><div class="rp-art" style="background:${ZINES[currentZine].col}15"><i class="ti ti-photo" aria-hidden="true"></i></div><div style="white-space:pre-line">${s.lb}</div><span class="pg-num">${currentSpread*2+1}</span>`;
+  document.getElementById('r-right').innerHTML=`<div class="rp-head">${s.rh}</div><div class="rp-art" style="background:${ZINES[currentZine].col}10"><i class="ti ti-photo" aria-hidden="true"></i></div><div style="white-space:pre-line">${s.rb}</div><span class="pg-num">${currentSpread*2+2}</span>`;
+  document.getElementById('r-commentary').className='ai-box';
+  document.getElementById('r-commentary').textContent='"'+s.commentary+'" — JawsAtak47';
+  const cl=document.getElementById('r-charlinks');
+  cl.innerHTML=ZINES[currentZine].chars.map(cn=>`<span class="char-link" onclick="goChar('${cn}')"><i class="ti ti-user-star" aria-hidden="true" style="font-size:11px"></i>${cn}</span>`).join('');
+}
+
+function goChar(name){
+  const idx=CHARS.findIndex(c=>c.name===name);
+  if(idx>=0){go('chars');setTimeout(()=>openChar(idx),50);}
+}
+
+function pg(dir){
+  if(currentZine===null)return;
+  const z=ZINES[currentZine];
+  currentSpread=Math.max(0,Math.min(z.spreads.length-1,currentSpread+dir));
+  renderSpread();
+}
+
+function closeReader(){
+  document.getElementById('zine-reader').style.display='none';
+  document.getElementById('zine-library').style.display='block';
+}
+
+function buildQU(){
+  const g=document.getElementById('qu-schools-grid');
+  QU_SCHOOLS.forEach(s=>{
+    const d=document.createElement('div');d.className='school';
+    const courses=s.courses.map(c=>`<div class="lesson-row${c.free?'':' premium'}" onclick="completeLesson(${c.xp},${c.free})"><span>${c.name}</span>${c.free?`<span class="xp-tag">+${c.xp} XP</span>`:`<span class="lock-tag"><i class="ti ti-lock" aria-hidden="true" style="font-size:10px"></i> QU+</span>`}</div>`).join('');
+    d.innerHTML=`<div class="school-head"><div class="school-icon"><i class="ti ${s.icon}" aria-hidden="true"></i></div><div><div class="school-name">${s.name}</div><div class="school-count">${s.courses.length} courses</div></div></div>${courses}`;
+    g.appendChild(d);
+  });
+}
+
+function completeLesson(xpAmt,free){
+  if(!free)return sendPrompt('Tell me more about QuarkUniversity+ — what courses are available, how does the XP system work, and what does QuarkMaster rank unlock?');
+  addXP(xpAmt);
+}
+
+function buildChallenges(){
+  const g=document.getElementById('challenge-grid');
+  CHALLENGES.forEach(c=>{
+    const d=document.createElement('div');d.className='challenge-card';
+    d.innerHTML=`<div class="ch-status ${c.status}">${c.status==='live'?'LIVE NOW':'UPCOMING'}</div><div class="ch-title">${c.title}</div><div class="ch-desc">${c.desc}</div><div class="ch-rewards">${c.rewards.map(r=>`<span class="reward-tag">${r}</span>`).join('')}</div>${c.status==='live'?`<button class="btn p sm" style="margin-top:12px;width:100%" onclick="joinChallenge('${c.title}',${c.xp})">Join — +${c.xp} XP ↗</button>`:'<div style="font-size:11px;color:var(--color-text-tertiary);margin-top:10px">Opening soon</div>'}`;
+    g.appendChild(d);
+  });
+}
+
+function joinChallenge(title,xpAmt){
+  addXP(xpAmt);
+  sendPrompt(`I want to join the "${title}" challenge in Canvas Wars / QuarkForce. Help me brainstorm my concept and what I should create.`);
+}
+
+function buildMusic(){
+  const g=document.getElementById('music-grid');
+  TRACKS.forEach(t=>{
+    const d=document.createElement('div');d.className='track';
+    d.innerHTML=`<div class="track-art" style="background:${t.col}18"><i class="ti ti-music bg" aria-hidden="true" style="color:${t.col}"></i><i class="ti ti-player-play track-play" aria-hidden="true" style="color:${t.col}"></i></div><div class="track-info"><div class="track-title">${t.title}</div><div class="track-sub">JawsAtak47</div><div class="track-lore">${t.lore}</div></div>`;
+    g.appendChild(d);
+  });
+}
+
+const SYS={
+  oracle:'You are the QuarkForce Oracle — omniscient voice of the QuarkForce universe created by JawsAtak47 (Anthony Vella), a multidisciplinary artist, zine publisher, event producer, musician, and educator based in Medford, OR. He operates from Timeless Treasures Hub and OH\'s Osaka as a teppanyaki cook. The QuarkForce ecosystem includes: Characters (BlackPacalyps, TinySquatchMan, Lepton Mu, Cockroach Lady, Xiangba, Bugaboo, Marvelous Wonderful, Duct TapeMan, Infinite Infant). Worlds: Monster Island and Neon Waterplant. Events: Canvas Wars Year 1 (Miles won 8pts), MonsTober coming. Education: QuarkUniversity (160 classes, 10 schools, XP rank system Observer→Explorer→Creator→Builder→QuarkMaster). Music: JawsAtak47 discography rooted in Bay Area/Detroit hip-hop. Brand: QuarkForce umbrella includes QuarkZine (6+ issues), Canvas Wars, QuarkUniversity. Answer vividly, authoritatively, and concisely.',
+  tutor:'You are the QuarkUniversity tutor — an expert art educator founded by JawsAtak47, who trained in sign painting and gold leaf at LA Trade Tech under Doc Guthrie, Noel B. Webber, and Joby Carter. He has 20+ years in graffiti, hip-hop, and street art. QuarkUniversity teaches: lettering, graffiti, character design, mural painting, gold leaf, sign painting, zine production, and business for independent artists. Be direct, practical, encouraging. Keep answers actionable and specific.',
+  music:'You are the music archivist for JawsAtak47 — an independent artist/musician from Medford, OR rooted in Bay Area hip-hop (Mac Dre, Mistah FAB) and Detroit (Payroll Giovanni). Every track in his catalog is universe lore for QuarkForce. Answer questions about the music, production, influences, and how the sound connects to characters and worlds. Be specific, vivid, knowledgeable. Treat the music as canon — as important as the visual art.'
+};
+
+async function chat(mode){
+  const inputEl=document.getElementById(mode==='oracle'?'oracle-q':mode==='tutor'?'tutor-q':'music-q');
+  const msgsEl=document.getElementById(mode==='oracle'?'oracle-msgs':mode==='tutor'?'tutor-msgs':'music-msgs');
+  const q=inputEl.value.trim();if(!q)return;
+  inputEl.value='';
+  const um=document.createElement('div');um.className='msg-u';um.textContent=q;msgsEl.appendChild(um);
+  const lm=document.createElement('div');lm.className='msg-load';lm.textContent='Thinking...';msgsEl.appendChild(lm);
+  msgsEl.scrollTop=msgsEl.scrollHeight;
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system:SYS[mode],messages:[{role:'user',content:q}]})});
+    const d=await r.json();
+    lm.className='msg-a';lm.textContent=d.content?.[0]?.text||'No response.';
+  }catch(e){lm.className='msg-a';lm.textContent='Connection error.'}
+  msgsEl.scrollTop=msgsEl.scrollHeight;
+}
+
+buildChars();buildZines();buildQU();buildChallenges();buildMusic();
+</script>
