@@ -1,730 +1,1574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quarkforce Universe Hub</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
 
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font-sans);background:var(--color-background-tertiary);color:var(--color-text-primary)}
-.hub{display:flex;flex-direction:column}
-.nav{display:flex;align-items:center;gap:0;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);position:sticky;top:0;z-index:50;overflow-x:auto}
-.nav-logo{font-size:15px;font-weight:500;padding:0 16px;white-space:nowrap;border-right:0.5px solid var(--color-border-tertiary);height:44px;display:flex;align-items:center;flex-shrink:0}
-.nav-logo span{color:#7f77dd}
-.nav-items{display:flex;align-items:center}
-.nav-item{display:flex;align-items:center;gap:6px;padding:0 14px;height:44px;font-size:13px;cursor:pointer;color:var(--color-text-secondary);border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;border-right:0.5px solid var(--color-border-tertiary)}
-.nav-item:hover{color:var(--color-text-primary);background:var(--color-background-secondary)}
-.nav-item.active{color:#7f77dd;border-bottom-color:#7f77dd;background:var(--color-background-secondary)}
-.nav-item i{font-size:15px}
-.nav-right{margin-left:auto;display:flex;align-items:center;gap:8px;padding:0 14px;flex-shrink:0}
-.xp-pill{display:flex;align-items:center;gap:5px;font-size:12px;padding:4px 10px;border-radius:20px;background:#7f77dd18;color:#7f77dd;border:0.5px solid #7f77dd33;white-space:nowrap}
-.rank-pill{display:flex;align-items:center;gap:5px;font-size:12px;padding:4px 10px;border-radius:20px;background:var(--color-background-secondary);color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary);white-space:nowrap}
-.main{padding:20px}
-.sec{display:none}.sec.active{display:block}
+  <style>
+    /* ============================================================
+       QUARKFORCE UNIVERSE HUB — design tokens
+       Ink black, bone paper, acid mark, gold leaf, signal red.
+       Inspired by risograph zine printing + hand-painted signage.
+       ============================================================ */
 
-.hero-row{display:grid;grid-template-columns:1fr 280px;gap:12px;margin-bottom:16px}
-.hero-main{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:28px;position:relative;overflow:hidden}
-.hero-eyebrow{font-size:11px;letter-spacing:.1em;color:var(--color-text-tertiary);margin-bottom:6px}
-.hero-main h1{font-size:24px;font-weight:500;line-height:1.2;margin-bottom:8px}
-.hero-main h1 em{font-style:normal;color:#7f77dd}
-.hero-main p{font-size:13px;color:var(--color-text-secondary);line-height:1.65;margin-bottom:18px;max-width:400px}
-.hero-btns{display:flex;gap:8px;flex-wrap:wrap}
-.btn{padding:7px 16px;border-radius:var(--border-radius-md);font-size:13px;cursor:pointer;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-primary);font-family:inherit;transition:all .15s}
-.btn:hover{background:var(--color-background-secondary)}
-.btn.p{background:#7f77dd;color:#fff;border-color:#7f77dd}.btn.p:hover{background:#534ab7}
-.btn.sm{padding:5px 12px;font-size:12px}
-.hero-glyph{position:absolute;right:24px;bottom:16px;font-size:80px;opacity:.05;line-height:1;user-select:none}
-.hero-side{display:flex;flex-direction:column;gap:12px}
-.hero-side-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px;cursor:pointer;transition:border-color .15s}
-.hero-side-card:hover{border-color:var(--color-border-secondary)}
-.hsc-label{font-size:10px;color:var(--color-text-tertiary);letter-spacing:.08em;margin-bottom:4px}
-.hsc-val{font-size:14px;font-weight:500}
-.hsc-sub{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+    :root{
+      --ink:#0d0d0d;
+      --ink-soft:#1a1a18;
+      --paper:#f2eee2;
+      --paper-dim:#e8e2d2;
+      --paper-line:#d8d0ba;
+      --acid:#c8e85a;
+      --acid-dark:#7a9c2a;
+      --signal:#d4402a;
+      --signal-dark:#8f2a1c;
+      --gold:#c9a13b;
+      --gold-dark:#8a6c1f;
+      --teal:#2f8f6f;
+      --plasma:#7f6fd6;
 
-.shelf-label{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:10px;letter-spacing:.04em}
-.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:20px}
-.shelf-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px;cursor:pointer;transition:border-color .15s}
-.shelf-card:hover{border-color:var(--color-border-secondary)}
-.sc-icon{font-size:20px;margin-bottom:8px}
-.sc-icon i{font-size:20px}
-.sc-name{font-size:13px;font-weight:500;margin-bottom:3px}
-.sc-sub{font-size:11px;color:var(--color-text-secondary);line-height:1.5}
-.sc-tag{font-size:10px;padding:2px 7px;border-radius:20px;margin-top:7px;display:inline-block;background:var(--color-background-secondary);color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary)}
+      --font-display:'Anton', sans-serif;
+      --font-body:'Archivo', sans-serif;
+      --font-mono:'JetBrains Mono', monospace;
 
-.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;margin-bottom:20px}
-.stat{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px}
-.stat-n{font-size:20px;font-weight:500}
-.stat-l{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+      --radius:2px;
+    }
 
-.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px}
-.page-title{font-size:16px;font-weight:500}
-.page-sub{font-size:12px;color:var(--color-text-secondary)}
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      background:var(--paper);
+      color:var(--ink);
+      font-family:var(--font-body);
+      font-size:16px;
+      line-height:1.5;
+      background-image:
+        radial-gradient(circle at 1px 1px, rgba(13,13,13,0.04) 1px, transparent 0);
+      background-size:14px 14px;
+    }
 
-.char-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:16px}
-.char-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px;cursor:pointer;transition:border-color .15s}
-.char-card:hover{border-color:#7f77dd55}
-.char-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:500;margin-bottom:10px}
-.char-name{font-size:14px;font-weight:500;margin-bottom:2px}
-.char-role{font-size:11px;color:var(--color-text-secondary)}
-.char-world{font-size:10px;padding:2px 7px;border-radius:20px;display:inline-block;margin-top:6px;background:#7f77dd15;color:#534ab7;border:0.5px solid #7f77dd25}
+    @media (prefers-reduced-motion: reduce){
+      *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important}
+    }
 
-.char-detail-wrap{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:24px;margin-bottom:16px}
-.cd-top{display:flex;align-items:flex-start;gap:16px;margin-bottom:16px}
-.cd-av{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:500;flex-shrink:0}
-.cd-meta h2{font-size:18px;font-weight:500;margin-bottom:3px}
-.cd-meta p{font-size:13px;color:var(--color-text-secondary)}
-.cd-tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:0.5px solid var(--color-border-tertiary);padding-bottom:0}
-.cd-tab{padding:6px 14px;font-size:12px;cursor:pointer;border-bottom:2px solid transparent;color:var(--color-text-secondary);transition:all .15s}
-.cd-tab.active{color:#7f77dd;border-bottom-color:#7f77dd}
-.cd-pane{display:none}.cd-pane.active{display:block}
-.powers-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.power{font-size:11px;padding:3px 8px;border-radius:20px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary)}
-.unlock-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:10px}
-.unlock-item{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px;text-align:center;font-size:11px;color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary)}
-.unlock-item i{font-size:20px;display:block;margin-bottom:4px;color:var(--color-text-tertiary)}
-.unlock-item.locked{opacity:.5}
-.ai-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:14px;font-size:13px;line-height:1.7;color:var(--color-text-secondary);margin-top:8px;min-height:44px}
-.ai-box.loading{color:var(--color-text-tertiary);font-style:italic}
+    a{color:inherit;text-decoration:none}
+    button{font-family:inherit;cursor:pointer;border:none;background:none}
+    img{max-width:100%;display:block}
+    ul{list-style:none}
 
-.zine-covers{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:16px}
-.zine-thumb{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px;cursor:pointer;transition:border-color .15s;text-align:center}
-.zine-thumb:hover{border-color:#7f77dd55}
-.zine-art{width:100%;aspect-ratio:3/4;border-radius:var(--border-radius-md);margin-bottom:8px;display:flex;align-items:center;justify-content:center;background:var(--color-background-secondary)}
-.zine-art i{font-size:28px;color:var(--color-text-tertiary)}
-.zine-num{font-size:10px;color:var(--color-text-tertiary)}
-.zine-tit{font-size:13px;font-weight:500}
+    ::selection{background:var(--acid);color:var(--ink)}
 
-.reader-wrap{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:16px}
-.reader-topbar{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:0.5px solid var(--color-border-tertiary);flex-wrap:wrap;gap:10px}
-.reader-spread{display:grid;grid-template-columns:1fr 1fr}
-.reader-page{padding:20px;min-height:260px;font-size:12px;line-height:1.75;color:var(--color-text-secondary);position:relative}
-.reader-page:first-child{border-right:0.5px solid var(--color-border-tertiary)}
-.rp-head{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px}
-.rp-art{width:100%;height:64px;border-radius:var(--border-radius-md);display:flex;align-items:center;justify-content:center;margin:8px 0;background:var(--color-background-secondary)}
-.rp-art i{font-size:20px;color:var(--color-text-tertiary)}
-.pg-num{position:absolute;bottom:10px;font-size:10px;color:var(--color-text-tertiary)}
-.reader-page:first-child .pg-num{left:16px}
-.reader-page:last-child .pg-num{right:16px}
-.reader-bottom{padding:14px 20px;border-top:0.5px solid var(--color-border-tertiary)}
-.commentary-label{font-size:11px;color:var(--color-text-tertiary);margin-bottom:6px;display:flex;align-items:center;gap:5px}
-.commentary-label i{font-size:13px}
-.char-link{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 8px;border-radius:20px;background:#7f77dd15;color:#534ab7;border:0.5px solid #7f77dd25;cursor:pointer;margin-top:8px}
-.char-link:hover{background:#7f77dd25}
+    :focus-visible{outline:3px solid var(--signal);outline-offset:2px}
 
-.qu-progress{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px;margin-bottom:16px}
-.progress-bar-wrap{height:8px;background:var(--color-background-secondary);border-radius:4px;margin:8px 0;overflow:hidden;border:0.5px solid var(--color-border-tertiary)}
-.progress-bar-fill{height:100%;background:#7f77dd;border-radius:4px;transition:width .5s}
-.rank-steps{display:flex;justify-content:space-between;font-size:10px;color:var(--color-text-tertiary);margin-top:4px}
-.rank-step.done{color:#7f77dd}
-.qu-schools{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:16px}
-.school{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px}
-.school-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.school-icon i{font-size:18px;color:#7f77dd}
-.school-name{font-size:14px;font-weight:500}
-.school-count{font-size:11px;color:var(--color-text-secondary)}
-.lesson-row{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-radius:var(--border-radius-md);font-size:12px;cursor:pointer;margin-bottom:4px;border:0.5px solid transparent}
-.lesson-row:hover{background:var(--color-background-secondary);border-color:var(--color-border-tertiary)}
-.lesson-row.premium{color:var(--color-text-tertiary)}
-.xp-tag{font-size:10px;color:#7f77dd;font-weight:500}
-.lock-tag{font-size:10px;color:var(--color-text-tertiary);display:flex;align-items:center;gap:3px}
+    .sr-only{
+      position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+      overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
+    }
 
-.challenge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:16px}
-.challenge-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px}
-.ch-status{font-size:10px;letter-spacing:.06em;margin-bottom:6px}
-.ch-status.live{color:#1d9e75}
-.ch-status.upcoming{color:#ef9f27}
-.ch-title{font-size:14px;font-weight:500;margin-bottom:4px}
-.ch-desc{font-size:12px;color:var(--color-text-secondary);line-height:1.55;margin-bottom:10px}
-.ch-rewards{display:flex;gap:6px;flex-wrap:wrap}
-.reward-tag{font-size:10px;padding:2px 7px;border-radius:20px;background:#7f77dd15;color:#534ab7;border:0.5px solid #7f77dd25}
+    /* ============================================================
+       LAYOUT SHELL
+       ============================================================ */
 
-.cw-event{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:20px;margin-bottom:12px}
-.event-status{font-size:10px;letter-spacing:.08em;margin-bottom:4px}
-.event-status.done{color:#1d9e75}.event-status.upcoming{color:#7f77dd}
-.event-title{font-size:16px;font-weight:500;margin-bottom:4px}
-.event-meta{font-size:12px;color:var(--color-text-secondary);margin-bottom:14px;display:flex;align-items:center;gap:6px}
-.lb{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
-.lb-row{display:grid;grid-template-columns:32px 1fr auto auto;align-items:center;gap:10px;padding:9px 14px;border-bottom:0.5px solid var(--color-border-tertiary);font-size:13px}
-.lb-row:last-child{border-bottom:none}
-.lb-rank{text-align:center;font-size:11px;color:var(--color-text-tertiary)}
-.lb-rank.g{color:#ba7517;font-weight:500}
-.lb-badge{font-size:10px;padding:2px 7px;border-radius:20px;background:#7f77dd15;color:#534ab7}
-.lb-pts{font-weight:500}
-.sponsor-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.sp-tag{font-size:11px;padding:3px 8px;border-radius:20px;background:var(--color-background-secondary);color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary)}
+    .shell{display:flex;flex-direction:column;min-height:100vh}
 
-.music-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:16px}
-.track{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;cursor:pointer;transition:border-color .15s}
-.track:hover{border-color:var(--color-border-secondary)}
-.track-art{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:36px;position:relative}
-.track-art i.bg{font-size:36px;opacity:.3}
-.track-play{position:absolute;font-size:18px;opacity:0;transition:.15s;color:var(--color-background-primary)}
-.track:hover .track-play{opacity:1}
-.track-info{padding:10px 12px}
-.track-title{font-size:13px;font-weight:500;margin-bottom:2px}
-.track-sub{font-size:11px;color:var(--color-text-secondary)}
-.track-lore{font-size:10px;margin-top:4px;padding:2px 6px;border-radius:20px;display:inline-block;background:#7f77dd15;color:#534ab7}
+    .skip-link{
+      position:absolute;left:-9999px;top:0;background:var(--ink);color:var(--paper);
+      padding:10px 16px;z-index:1000;font-family:var(--font-mono);font-size:13px;
+    }
+    .skip-link:focus{left:0}
 
-.oracle{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:18px;margin-bottom:16px}
-.oracle-head{font-size:13px;font-weight:500;margin-bottom:12px;display:flex;align-items:center;gap:7px;color:var(--color-text-primary)}
-.oracle-head i{color:#7f77dd;font-size:16px}
-.chat-row{display:flex;gap:8px;margin-bottom:12px}
-.chat-row input{flex:1;padding:8px 12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary);font-size:13px;font-family:inherit}
-.chat-row input::placeholder{color:var(--color-text-tertiary)}
-.msgs{display:flex;flex-direction:column;gap:8px;max-height:180px;overflow-y:auto}
-.msg-u{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 12px;font-size:13px;line-height:1.6;align-self:flex-end;max-width:80%}
-.msg-a{background:#7f77dd10;border:0.5px solid #7f77dd20;border-radius:var(--border-radius-md);padding:8px 12px;font-size:13px;line-height:1.6;color:var(--color-text-secondary);max-width:90%}
-.msg-load{font-size:13px;color:var(--color-text-tertiary);font-style:italic;padding:8px 0}
+    /* ============================================================
+       NAV
+       ============================================================ */
 
-@media(max-width:520px){
-.hero-row{grid-template-columns:1fr}
-.hero-side{display:none}
-.reader-spread{grid-template-columns:1fr}
-.reader-page:first-child{border-right:none;border-bottom:0.5px solid var(--color-border-tertiary)}
-}
-</style>
+    .topnav{
+      position:sticky;top:0;z-index:200;
+      background:var(--ink);
+      border-bottom:4px solid var(--acid);
+    }
+    .topnav-inner{
+      max-width:1180px;margin:0 auto;
+      display:flex;align-items:center;gap:0;
+      padding:0 20px;height:64px;
+    }
+    .brand{
+      font-family:var(--font-display);
+      color:var(--paper);
+      font-size:22px;
+      letter-spacing:0.01em;
+      display:flex;align-items:center;gap:8px;
+      margin-right:auto;
+      flex-shrink:0;
+    }
+    .brand .brand-mark{color:var(--acid)}
+    .brand .brand-sub{
+      font-family:var(--font-mono);
+      font-size:10px;
+      color:var(--paper-dim);
+      letter-spacing:0.08em;
+      text-transform:uppercase;
+      border-left:1px solid var(--ink-soft);
+      padding-left:8px;
+      margin-left:2px;
+      display:none;
+    }
+    @media(min-width:720px){ .brand .brand-sub{display:block} }
 
-<h2 class="sr-only">QuarkForce Universe Hub — interactive platform with characters, zines, courses, challenges, events, and music</h2>
-<div class="hub">
-<nav class="nav">
-  <div class="nav-logo">Quark<span>Force</span></div>
-  <div class="nav-items">
-    <div class="nav-item active" onclick="go('home')"><i class="ti ti-home" aria-hidden="true"></i> Home</div>
-    <div class="nav-item" onclick="go('chars')"><i class="ti ti-user-star" aria-hidden="true"></i> Characters</div>
-    <div class="nav-item" onclick="go('zines')"><i class="ti ti-book-2" aria-hidden="true"></i> QuarkZine</div>
-    <div class="nav-item" onclick="go('qu')"><i class="ti ti-school" aria-hidden="true"></i> QuarkUniversity</div>
-    <div class="nav-item" onclick="go('challenges')"><i class="ti ti-bolt" aria-hidden="true"></i> Challenges</div>
-    <div class="nav-item" onclick="go('cw')"><i class="ti ti-trophy" aria-hidden="true"></i> Canvas Wars</div>
-    <div class="nav-item" onclick="go('music')"><i class="ti ti-music" aria-hidden="true"></i> Music</div>
-  </div>
-  <div class="nav-right">
-    <div class="xp-pill"><i class="ti ti-star" aria-hidden="true" style="font-size:13px"></i> <span id="xp-display">0</span> XP</div>
-    <div class="rank-pill" id="rank-pill"><i class="ti ti-eye" aria-hidden="true" style="font-size:13px"></i> Observer</div>
-  </div>
-</nav>
+    .navlinks{
+      display:none;
+      gap:2px;
+      align-items:center;
+      height:100%;
+    }
+    @media(min-width:880px){ .navlinks{display:flex} }
 
-<div class="main">
+    .navlink{
+      font-family:var(--font-mono);
+      font-size:12px;
+      letter-spacing:0.05em;
+      text-transform:uppercase;
+      color:var(--paper-dim);
+      padding:0 14px;
+      height:64px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      border-bottom:3px solid transparent;
+      transition:color .15s, border-color .15s;
+    }
+    .navlink:hover{color:var(--paper)}
+    .navlink.active{color:var(--acid);border-bottom-color:var(--acid)}
 
-<!-- HOME -->
-<div id="sec-home" class="sec active">
-  <div class="hero-row">
-    <div class="hero-main">
-      <div class="hero-eyebrow">QuarkForce — Medford, OR</div>
-      <h1>Where creativity<br>becomes an <em>adventure.</em></h1>
-      <p>Art. Education. Music. Community. Events. IP. One living universe built by JawsAtak47 — enter through any door.</p>
-      <div class="hero-btns">
-        <button class="btn p" onclick="go('chars')">Explore the roster</button>
-        <button class="btn" onclick="go('zines')">Read QuarkZine</button>
-        <button class="btn" onclick="go('challenges')">Join a challenge</button>
-      </div>
-      <div class="hero-glyph">⬡</div>
-    </div>
-    <div class="hero-side">
-      <div class="hero-side-card" onclick="go('zines')">
-        <div class="hsc-label">Latest issue</div>
-        <div class="hsc-val">QuarkZine — Issue 06</div>
-        <div class="hsc-sub">Sound &amp; Vision · Available now</div>
-      </div>
-      <div class="hero-side-card" onclick="go('chars')">
-        <div class="hsc-label">Featured character</div>
-        <div class="hsc-val">BlackPacalyps</div>
-        <div class="hsc-sub">Monster Island · Protagonist</div>
-      </div>
-      <div class="hero-side-card" onclick="go('challenges')">
-        <div class="hsc-label">Live challenge</div>
-        <div class="hsc-val">MonsTober Mascot Vote</div>
-        <div class="hsc-sub">Draw a monster · 200 XP</div>
-      </div>
-      <div class="hero-side-card" onclick="go('cw')">
-        <div class="hsc-label">Upcoming event</div>
-        <div class="hsc-val">Canvas Wars: MonsTober</div>
-        <div class="hsc-sub">October · Medford, OR · All ages</div>
-      </div>
-    </div>
-  </div>
+    .nav-stats{
+      display:flex;align-items:center;gap:8px;
+      margin-left:12px;
+      flex-shrink:0;
+    }
+    .xp-chip{
+      font-family:var(--font-mono);
+      font-size:11px;
+      color:var(--ink);
+      background:var(--acid);
+      padding:5px 10px;
+      border-radius:20px;
+      display:flex;align-items:center;gap:5px;
+      white-space:nowrap;
+    }
+    .rank-chip{
+      font-family:var(--font-mono);
+      font-size:11px;
+      color:var(--paper);
+      border:1px solid var(--ink-soft);
+      padding:5px 10px;
+      border-radius:20px;
+      white-space:nowrap;
+      display:none;
+    }
+    @media(min-width:560px){ .rank-chip{display:block} }
 
-  <div class="stats-row">
-    <div class="stat"><div class="stat-n">12</div><div class="stat-l">Characters</div></div>
-    <div class="stat"><div class="stat-n">6+</div><div class="stat-l">Zine issues</div></div>
-    <div class="stat"><div class="stat-n">160</div><div class="stat-l">QU classes</div></div>
-    <div class="stat"><div class="stat-n">2</div><div class="stat-l">Worlds</div></div>
-    <div class="stat"><div class="stat-n">$500</div><div class="stat-l">Prize pool</div></div>
-  </div>
+    .navtoggle{
+      display:flex;
+      width:36px;height:36px;
+      align-items:center;justify-content:center;
+      color:var(--paper);
+      flex-shrink:0;
+    }
+    @media(min-width:880px){ .navtoggle{display:none} }
 
-  <div class="shelf-label">Explore the universe</div>
-  <div class="shelf">
-    <div class="shelf-card" onclick="go('chars')">
-      <div class="sc-icon" style="color:#7f77dd"><i class="ti ti-user-star" aria-hidden="true"></i></div>
-      <div class="sc-name">Characters</div>
-      <div class="sc-sub">Full bios, origins, powers, and unlockable content per character.</div>
-      <div class="sc-tag">12 in roster</div>
-    </div>
-    <div class="shelf-card" onclick="go('zines')">
-      <div class="sc-icon" style="color:#d85a30"><i class="ti ti-book-2" aria-hidden="true"></i></div>
-      <div class="sc-name">QuarkZine</div>
-      <div class="sc-sub">Digital reader with commentary, character links, and audio per issue.</div>
-      <div class="sc-tag">6 issues archived</div>
-    </div>
-    <div class="shelf-card" onclick="go('qu')">
-      <div class="sc-icon" style="color:#1d9e75"><i class="ti ti-school" aria-hidden="true"></i></div>
-      <div class="sc-name">QuarkUniversity</div>
-      <div class="sc-sub">Graffiti, letters, sign painting, character design, business for artists.</div>
-      <div class="sc-tag">Free + Premium</div>
-    </div>
-    <div class="shelf-card" onclick="go('challenges')">
-      <div class="sc-icon" style="color:#ef9f27"><i class="ti ti-bolt" aria-hidden="true"></i></div>
-      <div class="sc-name">Challenges</div>
-      <div class="sc-sub">Weekly missions. Earn XP, badges, and featured placement.</div>
-      <div class="sc-tag">3 live now</div>
-    </div>
-    <div class="shelf-card" onclick="go('cw')">
-      <div class="sc-icon" style="color:#d4537e"><i class="ti ti-trophy" aria-hidden="true"></i></div>
-      <div class="sc-name">Canvas Wars</div>
-      <div class="sc-sub">Events, results, galleries, and the MonsTober art show.</div>
-      <div class="sc-tag">Year 2 coming</div>
-    </div>
-    <div class="shelf-card" onclick="go('music')">
-      <div class="sc-icon" style="color:#378add"><i class="ti ti-music" aria-hidden="true"></i></div>
-      <div class="sc-name">Music</div>
-      <div class="sc-sub">JawsAtak47 discography — every track is universe lore.</div>
-      <div class="sc-tag">JawsAtak47</div>
-    </div>
-  </div>
+    .mobilenav{
+      display:none;
+      background:var(--ink);
+      border-bottom:4px solid var(--acid);
+      padding:8px 20px 16px;
+    }
+    .mobilenav.open{display:block}
+    .mobilenav .navlink{
+      height:44px;
+      width:100%;
+      border-bottom:1px solid var(--ink-soft);
+      border-left:3px solid transparent;
+      padding-left:8px;
+    }
+    .mobilenav .navlink.active{border-left-color:var(--acid);border-bottom-color:var(--ink-soft)}
 
-  <div class="oracle">
-    <div class="oracle-head"><i class="ti ti-sparkles" aria-hidden="true"></i> QuarkForce Oracle — ask anything about the universe</div>
-    <div class="chat-row">
-      <input type="text" id="oracle-q" placeholder="Who is BlackPacalyps? What is Monster Island? How does Canvas Wars work?" onkeydown="if(event.key==='Enter')chat('oracle')">
-      <button class="btn p" onclick="chat('oracle')">Ask ↗</button>
-    </div>
-    <div class="msgs" id="oracle-msgs"></div>
-  </div>
-</div>
+    /* ============================================================
+       MAIN / SECTIONS
+       ============================================================ */
 
-<!-- CHARACTERS -->
-<div id="sec-chars" class="sec">
-  <div id="chars-list-view">
-    <div class="page-header">
-      <div><div class="page-title">Character roster</div><div class="page-sub">Tap any character to explore their full profile</div></div>
-    </div>
-    <div class="char-grid" id="char-grid"></div>
-  </div>
-  <div id="chars-detail-view" style="display:none">
-    <button class="btn sm" onclick="closeCharDetail()" style="margin-bottom:14px"><i class="ti ti-arrow-left" aria-hidden="true" style="font-size:12px;margin-right:4px"></i>Back to roster</button>
-    <div class="char-detail-wrap">
-      <div class="cd-top">
-        <div id="cd-av" class="cd-av"></div>
-        <div class="cd-meta">
-          <h2 id="cd-name"></h2>
-          <p id="cd-role"></p>
-          <p id="cd-world" style="font-size:11px;margin-top:4px"></p>
+    .main{flex:1}
+    .wrap{max-width:1180px;margin:0 auto;padding:32px 20px 64px}
+
+    .view{display:none}
+    .view.active{display:block}
+
+    .page-head{
+      display:flex;justify-content:space-between;align-items:flex-end;
+      gap:16px;flex-wrap:wrap;
+      margin-bottom:28px;
+      padding-bottom:16px;
+      border-bottom:3px solid var(--ink);
+    }
+    .page-head h1{
+      font-family:var(--font-display);
+      font-size:clamp(28px,5vw,44px);
+      line-height:1;
+      letter-spacing:0.01em;
+    }
+    .page-head .page-kicker{
+      font-family:var(--font-mono);
+      font-size:11px;
+      letter-spacing:0.1em;
+      text-transform:uppercase;
+      color:var(--ink-soft);
+      opacity:0.6;
+      margin-bottom:6px;
+    }
+    .page-head p{
+      font-size:14px;color:var(--ink-soft);opacity:0.75;
+      max-width:480px;
+    }
+
+    .btn{
+      font-family:var(--font-mono);
+      font-size:12px;
+      letter-spacing:0.04em;
+      text-transform:uppercase;
+      padding:10px 18px;
+      border:2px solid var(--ink);
+      background:transparent;
+      color:var(--ink);
+      border-radius:0;
+      transition:transform .1s, background .15s, color .15s;
+      display:inline-flex;align-items:center;gap:6px;
+    }
+    .btn:hover{background:var(--ink);color:var(--paper)}
+    .btn:active{transform:translate(2px,2px)}
+    .btn.primary{background:var(--ink);color:var(--paper)}
+    .btn.primary:hover{background:var(--signal);border-color:var(--signal);color:var(--paper)}
+    .btn.accent{background:var(--acid);border-color:var(--ink);color:var(--ink)}
+    .btn.accent:hover{background:var(--ink);color:var(--acid)}
+    .btn.sm{padding:7px 12px;font-size:11px}
+
+    /* ============================================================
+       HOME — HERO
+       ============================================================ */
+
+    .hero{
+      background:var(--ink);
+      color:var(--paper);
+      padding:56px 32px;
+      position:relative;
+      overflow:hidden;
+      margin-bottom:24px;
+      border:3px solid var(--ink);
+    }
+    .hero::before{
+      content:'';
+      position:absolute;
+      top:0;right:0;bottom:0;
+      width:45%;
+      background:
+        repeating-linear-gradient(135deg, transparent 0 18px, rgba(200,232,90,0.05) 18px 19px);
+      pointer-events:none;
+    }
+    .hero-kicker{
+      font-family:var(--font-mono);
+      font-size:12px;
+      letter-spacing:0.12em;
+      text-transform:uppercase;
+      color:var(--acid);
+      margin-bottom:14px;
+      display:flex;align-items:center;gap:8px;
+    }
+    .hero-kicker::before{content:'';width:8px;height:8px;background:var(--acid);display:inline-block;border-radius:50%}
+    .hero h1{
+      font-family:var(--font-display);
+      font-size:clamp(40px,7vw,72px);
+      line-height:0.98;
+      letter-spacing:0.01em;
+      max-width:680px;
+      margin-bottom:18px;
+    }
+    .hero h1 .accent{color:var(--acid)}
+    .hero p{
+      font-size:16px;
+      color:var(--paper-dim);
+      max-width:460px;
+      margin-bottom:28px;
+      line-height:1.6;
+    }
+    .hero-actions{display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:1}
+    .hero .btn{border-color:var(--paper);color:var(--paper)}
+    .hero .btn:hover{background:var(--paper);color:var(--ink)}
+    .hero .btn.accent{background:var(--acid);border-color:var(--acid);color:var(--ink)}
+    .hero .btn.accent:hover{background:var(--paper);border-color:var(--paper);color:var(--ink)}
+
+    /* spotlight rail */
+    .spotlight-rail{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:1px;
+      background:var(--ink);
+      margin-bottom:24px;
+      border:3px solid var(--ink);
+    }
+    @media(max-width:880px){ .spotlight-rail{grid-template-columns:repeat(2,1fr)} }
+    .spotlight-card{
+      background:var(--paper);
+      padding:18px;
+      cursor:pointer;
+      transition:background .15s;
+      position:relative;
+    }
+    .spotlight-card:hover{background:var(--paper-dim)}
+    .spotlight-label{
+      font-family:var(--font-mono);
+      font-size:10px;
+      letter-spacing:0.08em;
+      text-transform:uppercase;
+      color:var(--ink-soft);
+      opacity:0.55;
+      margin-bottom:8px;
+    }
+    .spotlight-value{
+      font-family:var(--font-display);
+      font-size:18px;
+      margin-bottom:4px;
+      line-height:1.1;
+    }
+    .spotlight-sub{font-size:12px;color:var(--ink-soft);opacity:0.7}
+
+    /* stat strip */
+    .stat-strip{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:1px;
+      background:var(--ink);
+      margin-bottom:32px;
+      border:3px solid var(--ink);
+    }
+    @media(max-width:720px){ .stat-strip{grid-template-columns:repeat(3,1fr)} }
+    .stat-cell{
+      background:var(--acid);
+      padding:16px 14px;
+      text-align:center;
+    }
+    .stat-cell:nth-child(even){background:var(--paper)}
+    .stat-num{font-family:var(--font-display);font-size:28px;line-height:1}
+    .stat-label{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.06em;margin-top:4px;opacity:0.7}
+
+    /* explore shelf */
+    .shelf-title{
+      font-family:var(--font-mono);
+      font-size:12px;
+      letter-spacing:0.1em;
+      text-transform:uppercase;
+      margin-bottom:16px;
+      display:flex;align-items:center;gap:10px;
+    }
+    .shelf-title::after{content:'';flex:1;height:2px;background:var(--ink);opacity:0.15}
+
+    .module-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+      gap:14px;
+      margin-bottom:36px;
+    }
+    .module-card{
+      background:var(--paper);
+      border:3px solid var(--ink);
+      padding:20px;
+      cursor:pointer;
+      transition:transform .12s, box-shadow .12s;
+      position:relative;
+    }
+    .module-card:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+    .module-card .module-icon{
+      width:36px;height:36px;
+      margin-bottom:14px;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .module-card h3{
+      font-family:var(--font-display);
+      font-size:19px;
+      margin-bottom:8px;
+      letter-spacing:0.01em;
+    }
+    .module-card p{font-size:13px;color:var(--ink-soft);opacity:0.78;line-height:1.55;margin-bottom:12px}
+    .module-tag{
+      font-family:var(--font-mono);
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+      padding:3px 8px;
+      display:inline-block;
+      border:1px solid var(--ink);
+    }
+
+    /* ============================================================
+       ICONS (inline svg via mask, single color currentColor)
+       ============================================================ */
+    .icon{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:square;stroke-linejoin:miter}
+
+    /* ============================================================
+       CHARACTERS
+       ============================================================ */
+
+    .char-split{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:24px;
+    }
+    @media(min-width:760px){
+      .char-split{grid-template-columns:1fr 1.2fr}
+    }
+
+    .char-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+      gap:14px;
+    }
+    .char-card{
+      background:var(--paper);
+      border:3px solid var(--ink);
+      padding:18px;
+      cursor:pointer;
+      transition:transform .12s, box-shadow .12s;
+    }
+    .char-card:hover, .char-card.active{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+    .char-card.active{border-color:var(--signal)}
+    .char-swatch{
+      width:48px;height:48px;
+      display:flex;align-items:center;justify-content:center;
+      font-family:var(--font-display);
+      font-size:20px;
+      margin-bottom:12px;
+      border:2px solid var(--ink);
+      color:var(--ink);
+    }
+    .char-name{font-family:var(--font-display);font-size:16px;margin-bottom:3px}
+    .char-role{font-size:12px;color:var(--ink-soft);opacity:0.75;margin-bottom:8px;line-height:1.4}
+    .char-world-tag{
+      font-family:var(--font-mono);
+      font-size:10px;
+      text-transform:uppercase;
+      padding:2px 7px;
+      display:inline-block;
+      background:var(--ink);
+      color:var(--paper);
+    }
+
+    /* character detail */
+    .char-detail{
+      background:var(--paper);
+      border:3px solid var(--ink);
+      padding:28px;
+      align-self:start;
+    }
+    .char-detail-head{
+      display:flex;align-items:flex-start;gap:18px;
+      margin-bottom:20px;
+      padding-bottom:20px;
+      border-bottom:2px solid var(--ink);
+    }
+    .char-detail-swatch{
+      width:64px;height:64px;flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;
+      font-family:var(--font-display);font-size:26px;
+      border:3px solid var(--ink);color:var(--ink);
+    }
+    .char-detail-meta h2{font-family:var(--font-display);font-size:26px;margin-bottom:4px}
+    .char-detail-meta .role-line{font-size:13px;color:var(--ink-soft);opacity:0.8}
+    .char-detail-meta .world-line{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;margin-top:6px;color:var(--ink-soft)}
+
+    .tab-row{display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid var(--ink);flex-wrap:wrap}
+    .tab-btn{
+      font-family:var(--font-mono);
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+      padding:9px 16px;
+      border-bottom:3px solid transparent;
+      color:var(--ink-soft);
+      margin-bottom:-2px;
+    }
+    .tab-btn.active{color:var(--ink);border-bottom-color:var(--signal)}
+    .tab-pane{display:none}
+    .tab-pane.active{display:block}
+
+    .power-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+    .power-pill{
+      font-family:var(--font-mono);
+      font-size:11px;
+      text-transform:uppercase;
+      padding:4px 10px;
+      border:1px solid var(--ink);
+    }
+    .char-bio{font-size:15px;line-height:1.7;margin-bottom:16px}
+    .appears-label{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;opacity:0.6;margin-bottom:8px}
+    .appears-row{display:flex;gap:6px;flex-wrap:wrap}
+    .appears-pill{font-family:var(--font-mono);font-size:11px;padding:3px 8px;border:1px solid var(--paper-line);background:var(--paper-dim)}
+
+    .media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+    .media-tile{
+      border:2px dashed var(--paper-line);
+      padding:18px 12px;
+      text-align:center;
+      font-family:var(--font-mono);
+      font-size:11px;
+      text-transform:uppercase;
+      color:var(--ink-soft);
+    }
+    .media-tile .icon{width:24px;height:24px;margin:0 auto 8px;opacity:0.5}
+
+    .unlock-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+    .unlock-tile{
+      border:2px solid var(--ink);
+      padding:14px 10px;
+      text-align:center;
+      font-family:var(--font-mono);
+      font-size:11px;
+      text-transform:uppercase;
+      background:var(--acid);
+    }
+    .unlock-tile.locked{background:var(--paper-dim);border-color:var(--paper-line);color:var(--ink-soft);opacity:0.7}
+    .unlock-tile .icon{width:22px;height:22px;margin:0 auto 6px}
+    .unlock-tile .unlock-req{font-size:9px;opacity:0.7;margin-top:4px;text-transform:none}
+
+    .lore-text{font-size:15px;line-height:1.75;background:var(--paper-dim);padding:18px;border-left:4px solid var(--gold)}
+
+    /* ============================================================
+       QUARKZINE
+       ============================================================ */
+
+    .zine-covers{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+      gap:14px;
+      margin-bottom:32px;
+    }
+    .zine-cover{
+      cursor:pointer;
+      transition:transform .12s;
+    }
+    .zine-cover:hover{transform:translate(-2px,-2px)}
+    .zine-cover-art{
+      aspect-ratio:3/4;
+      border:3px solid var(--ink);
+      display:flex;flex-direction:column;
+      align-items:center;justify-content:center;
+      margin-bottom:8px;
+      position:relative;
+      overflow:hidden;
+    }
+    .zine-cover-art::after{
+      content:'';
+      position:absolute;inset:0;
+      background:repeating-linear-gradient(45deg, transparent 0 6px, rgba(13,13,13,0.04) 6px 7px);
+    }
+    .zine-cover-num{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;opacity:0.6;position:relative;z-index:1}
+    .zine-cover-title{font-family:var(--font-display);font-size:18px;text-align:center;padding:0 8px;position:relative;z-index:1}
+    .zine-cover-meta{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;opacity:0.6}
+    .zine-cover-titlebar{font-size:13px;font-weight:700;font-family:var(--font-body)}
+
+    .reader{background:var(--paper);border:3px solid var(--ink)}
+    .reader-top{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:16px 22px;border-bottom:2px solid var(--ink);
+      flex-wrap:wrap;gap:10px;
+    }
+    .reader-top-meta .r-num{font-family:var(--font-mono);font-size:11px;opacity:0.6;text-transform:uppercase}
+    .reader-top-meta .r-title{font-family:var(--font-display);font-size:20px}
+    .reader-nav{display:flex;align-items:center;gap:10px}
+    .reader-page-lbl{font-family:var(--font-mono);font-size:12px;opacity:0.7}
+
+    .reader-spread{display:grid;grid-template-columns:1fr 1fr}
+    @media(max-width:640px){ .reader-spread{grid-template-columns:1fr} }
+    .reader-page{padding:24px;min-height:280px;position:relative}
+    .reader-page:first-child{border-right:2px solid var(--ink)}
+    @media(max-width:640px){ .reader-page:first-child{border-right:none;border-bottom:2px solid var(--ink)} }
+    .rp-head{font-family:var(--font-display);font-size:18px;margin-bottom:12px}
+    .rp-art{
+      width:100%;height:70px;
+      border:2px dashed var(--paper-line);
+      display:flex;align-items:center;justify-content:center;
+      margin:10px 0;color:var(--paper-line);
+    }
+    .rp-art .icon{width:22px;height:22px}
+    .rp-body{font-size:13.5px;line-height:1.75;white-space:pre-line;color:var(--ink-soft)}
+    .pg-num{position:absolute;bottom:14px;font-family:var(--font-mono);font-size:10px;opacity:0.5}
+    .reader-page:first-child .pg-num{left:24px}
+    .reader-page:last-child .pg-num{right:24px}
+
+    .reader-bottom{padding:18px 22px;border-top:2px solid var(--ink);background:var(--paper-dim)}
+    .commentary-label{
+      font-family:var(--font-mono);font-size:11px;text-transform:uppercase;
+      opacity:0.6;margin-bottom:8px;display:flex;align-items:center;gap:6px;
+    }
+    .commentary-label .icon{width:14px;height:14px}
+    .commentary-text{font-family:var(--font-body);font-size:15px;line-height:1.7;font-style:italic}
+    .charlink-row{margin-top:12px;display:flex;gap:6px;flex-wrap:wrap}
+    .charlink{
+      font-family:var(--font-mono);font-size:11px;text-transform:uppercase;
+      padding:4px 10px;border:1px solid var(--ink);cursor:pointer;
+      background:var(--paper);transition:background .15s;
+    }
+    .charlink:hover{background:var(--acid)}
+
+    /* ============================================================
+       QUARKUNIVERSITY
+       ============================================================ */
+
+    .progress-panel{
+      background:var(--ink);color:var(--paper);
+      padding:20px 24px;margin-bottom:24px;
+      border:3px solid var(--ink);
+    }
+    .progress-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px}
+    .progress-head .pname{font-family:var(--font-display);font-size:16px}
+    .progress-head .pxp{font-family:var(--font-mono);font-size:13px;color:var(--acid)}
+    .progress-bar{height:10px;background:var(--ink-soft);margin-bottom:10px;border:1px solid var(--paper-dim)}
+    .progress-fill{height:100%;background:var(--acid);transition:width .4s}
+    .rank-track{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:10px;text-transform:uppercase;color:var(--paper-dim)}
+    .rank-track span.done{color:var(--acid)}
+
+    .school-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+      gap:14px;
+      margin-bottom:32px;
+    }
+    .school-card{background:var(--paper);border:3px solid var(--ink);padding:18px}
+    .school-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+    .school-head .icon{width:22px;height:22px}
+    .school-name{font-family:var(--font-display);font-size:17px}
+    .school-count{font-family:var(--font-mono);font-size:10px;opacity:0.55;text-transform:uppercase}
+    .lesson-row{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:8px 10px;margin-bottom:4px;
+      border:1px solid transparent;font-size:13px;cursor:pointer;
+      transition:border-color .15s, background .15s;
+    }
+    .lesson-row:hover{border-color:var(--ink);background:var(--paper-dim)}
+    .lesson-xp{font-family:var(--font-mono);font-size:11px;color:var(--acid-dark)}
+    .lesson-lock{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;color:var(--gold-dark);display:flex;align-items:center;gap:4px}
+    .lesson-lock .icon{width:11px;height:11px}
+
+    /* ============================================================
+       CHALLENGES
+       ============================================================ */
+
+    .challenge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+    .challenge-card{background:var(--paper);border:3px solid var(--ink);padding:20px;display:flex;flex-direction:column}
+    .ch-status{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+    .ch-status.live{color:var(--teal)}
+    .ch-status.live::before{content:'';width:7px;height:7px;background:var(--teal);border-radius:50%}
+    .ch-status.upcoming{color:var(--gold-dark)}
+    .ch-title{font-family:var(--font-display);font-size:17px;margin-bottom:8px}
+    .ch-desc{font-size:13px;line-height:1.6;color:var(--ink-soft);opacity:0.85;margin-bottom:14px;flex:1}
+    .ch-rewards{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+    .reward-pill{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;padding:3px 8px;border:1px solid var(--ink)}
+
+    /* ============================================================
+       CANVAS WARS
+       ============================================================ */
+
+    .event-card{background:var(--paper);border:3px solid var(--ink);padding:24px;margin-bottom:16px}
+    .event-card.upcoming{border-color:var(--signal)}
+    .event-status{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
+    .event-status.done{color:var(--teal)}
+    .event-status.upcoming{color:var(--signal)}
+    .event-title{font-family:var(--font-display);font-size:24px;margin-bottom:6px}
+    .event-meta{font-size:13px;color:var(--ink-soft);opacity:0.8;margin-bottom:18px;display:flex;align-items:center;gap:6px}
+    .event-meta .icon{width:13px;height:13px}
+    .event-desc{font-size:14px;line-height:1.6;color:var(--ink-soft);margin-bottom:18px}
+
+    .lb-table{border:2px solid var(--ink)}
+    .lb-row{
+      display:grid;grid-template-columns:40px 1fr auto auto;align-items:center;
+      gap:12px;padding:10px 16px;border-bottom:1px solid var(--paper-line);font-size:13px;
+    }
+    .lb-row:last-child{border-bottom:none}
+    .lb-rank{font-family:var(--font-mono);text-align:center;opacity:0.6}
+    .lb-rank.gold{color:var(--gold-dark);font-weight:700;opacity:1}
+    .lb-badge{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;padding:2px 8px;background:var(--acid)}
+    .lb-pts{font-family:var(--font-display);font-size:15px}
+
+    .sponsor-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+    .sponsor-tag{font-family:var(--font-mono);font-size:11px;padding:4px 10px;border:1px solid var(--paper-line);background:var(--paper-dim)}
+
+    /* ============================================================
+       MUSIC
+       ============================================================ */
+
+    .track-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px}
+    .track-card{background:var(--paper);border:3px solid var(--ink);overflow:hidden;cursor:pointer;transition:transform .12s, box-shadow .12s}
+    .track-card:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+    .track-art{aspect-ratio:1;display:flex;align-items:center;justify-content:center;position:relative;border-bottom:2px solid var(--ink);background:var(--paper-dim)}
+    .track-art .icon{width:38%;height:38%;opacity:0.35}
+    .track-play{position:absolute;width:36px;height:36px;border-radius:50%;background:var(--ink);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s}
+    .track-card:hover .track-play{opacity:1}
+    .track-play .icon{width:14px;height:14px;color:var(--paper);stroke:var(--paper);fill:var(--paper)}
+    .track-info{padding:12px 14px}
+    .track-title{font-family:var(--font-display);font-size:14px;margin-bottom:3px}
+    .track-sub{font-family:var(--font-mono);font-size:10px;opacity:0.55;text-transform:uppercase}
+    .track-lore-tag{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;margin-top:6px;padding:2px 7px;background:var(--ink);color:var(--paper);display:inline-block}
+
+    /* ============================================================
+       ABOUT / FOOTER
+       ============================================================ */
+
+    .about-grid{display:grid;grid-template-columns:1fr;gap:24px}
+    @media(min-width:760px){ .about-grid{grid-template-columns:1.2fr 0.8fr} }
+    .about-panel{background:var(--paper);border:3px solid var(--ink);padding:24px}
+    .about-panel h2{font-family:var(--font-display);font-size:20px;margin-bottom:12px}
+    .about-panel p{font-size:14px;line-height:1.7;color:var(--ink-soft);margin-bottom:12px}
+    .credit-list{font-family:var(--font-mono);font-size:12px;line-height:2;color:var(--ink-soft)}
+
+    .site-footer{
+      background:var(--ink);color:var(--paper-dim);
+      padding:32px 20px;
+      font-family:var(--font-mono);font-size:12px;
+      border-top:4px solid var(--acid);
+      margin-top:auto;
+    }
+    .footer-inner{max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px}
+    .footer-inner a:hover{color:var(--acid)}
+
+    /* ============================================================
+       EMPTY / MISC
+       ============================================================ */
+    .empty-note{font-family:var(--font-mono);font-size:12px;opacity:0.5;text-align:center;padding:24px}
+  </style>
+</head>
+<body>
+
+  <div class="shell">
+    <a href="#main-content" class="skip-link">SKIP TO CONTENT</a>
+
+    <nav class="topnav" aria-label="Main Navigation">
+      <div class="topnav-inner">
+        <a href="#home" class="brand" onclick="switchView('home')">
+          <span class="brand-mark">//</span> QUARKFORCE <span class="brand-sub">Universe Hub</span>
+        </a>
+
+        <div class="navlinks">
+          <a href="#home" class="navlink active" data-target="home" onclick="switchView('home')">Dashboard</a>
+          <a href="#characters" class="navlink" data-target="characters" onclick="switchView('characters')">Database</a>
+          <a href="#zine" class="navlink" data-target="zine" onclick="switchView('zine')">QuarkZine</a>
+          <a href="#university" class="navlink" data-target="university" onclick="switchView('university')">Academy</a>
+          <a href="#canvas" class="navlink" data-target="canvas" onclick="switchView('canvas')">Canvas Wars</a>
+          <a href="#music" class="navlink" data-target="music" onclick="switchView('music')">Frequency</a>
+        </div>
+
+        <div class="nav-stats">
+          <div class="xp-chip" title="Total Accumulated Experience Points">
+            <svg class="icon" style="width:12px; height:12px;" viewBox="0 0 24 24"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"/></svg>
+            <span id="global-xp">2,450 XP</span>
+          </div>
+          <div class="rank-chip">RANK // ARCHIVIST V</div>
+          <button class="navtoggle" onclick="toggleMobileNav()" aria-label="Toggle Navigation Menu">
+            <svg class="icon" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
         </div>
       </div>
-      <div class="cd-tabs">
-        <div class="cd-tab active" onclick="cdTab('profile')">Profile</div>
-        <div class="cd-tab" onclick="cdTab('media')">Media</div>
-        <div class="cd-tab" onclick="cdTab('unlockables')">Unlockables</div>
-        <div class="cd-tab" onclick="cdTab('lore')">AI lore</div>
+    </nav>
+
+    <div class="mobilenav" id="mobilenav">
+      <a href="#home" class="navlink active" data-target="home" onclick="switchView('home')">Dashboard</a>
+      <a href="#characters" class="navlink" data-target="characters" onclick="switchView('characters')">Database</a>
+      <a href="#zine" class="navlink" data-target="zine" onclick="switchView('zine')">QuarkZine</a>
+      <a href="#university" class="navlink" data-target="university" onclick="switchView('university')">Academy</a>
+      <a href="#canvas" class="navlink" data-target="canvas" onclick="switchView('canvas')">Canvas Wars</a>
+      <a href="#music" class="navlink" data-target="music" onclick="switchView('music')">Frequency</a>
+    </div>
+
+    <main class="main" id="main-content">
+      <div class="wrap">
+
+        <section id="home" class="view active">
+          <div class="hero">
+            <div class="hero-kicker">Network Operational</div>
+            <h1>WELCOME TO THE <span class="accent">QUARKFORCE</span> UNIVERSE.</h1>
+            <p>An open narrative framework, risograph design sandbox, and distributed universe hub. Access blueprints, monitor active anomalies, and claim logs.</p>
+            <div class="hero-actions">
+              <button class="btn accent" onclick="switchView('characters')">Explore Records</button>
+              <button class="btn" onclick="switchView('zine')">Read Zines</button>
+            </div>
+          </div>
+
+          <div class="spotlight-rail">
+            <div class="spotlight-card" onclick="switchView('university')">
+              <div class="spotlight-label">Active Terminal</div>
+              <div class="spotlight-value">Academy Modules</div>
+              <div class="spotlight-sub">2 Unlocked entries pending sync</div>
+            </div>
+            <div class="spotlight-card" onclick="switchView('canvas')">
+              <div class="spotlight-label">Active Conflict</div>
+              <div class="spotlight-value">Canvas War IV</div>
+              <div class="spotlight-sub">Sector Node 09 closes in 14h</div>
+            </div>
+            <div class="spotlight-card" onclick="switchView('zine')">
+              <div class="spotlight-label">Fresh Release</div>
+              <div class="spotlight-value">Zine Issue #03</div>
+              <div class="spotlight-sub">Riso printing assets bundled</div>
+            </div>
+            <div class="spotlight-card" onclick="switchView('music')">
+              <div class="spotlight-label">Audio Terminal</div>
+              <div class="spotlight-value">Sub-Harmonics</div>
+              <div class="spotlight-sub">3 Nodes broadcast online</div>
+            </div>
+          </div>
+
+          <div class="stat-strip">
+            <div class="stat-cell">
+              <div class="stat-num">42</div>
+              <div class="stat-label">Entities</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-num">03</div>
+              <div class="stat-label">Zines</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-num">12</div>
+              <div class="stat-label">Sectors</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-num">89K</div>
+              <div class="stat-label">Points</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-num">99.8%</div>
+              <div class="stat-label">Uptime</div>
+            </div>
+          </div>
+
+          <div class="shelf-title">Core Subsystems</div>
+          <div class="module-grid">
+            <div class="module-card" onclick="switchView('characters')">
+              <div class="module-icon" style="background: var(--ink); color: var(--acid);">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              </div>
+              <h3>Character Logs</h3>
+              <p>Biographies, capability vectors, and system unlock matrices for registered personnel.</p>
+              <span class="module-tag">Database</span>
+            </div>
+            <div class="module-card" onclick="switchView('zine')">
+              <div class="module-icon" style="background: var(--ink); color: var(--signal);">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+              </div>
+              <h3>QuarkZine</h3>
+              <p>Lofi-production dispatches, artwork manifests, and underground community records.</p>
+              <span class="module-tag">Zine Media</span>
+            </div>
+            <div class="module-card" onclick="switchView('university')">
+              <div class="module-icon" style="background: var(--ink); color: var(--gold);">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path></svg>
+              </div>
+              <h3>QuarkUniversity</h3>
+              <p>Complete learning pathways, terminal challenges, and experimental protocols.</p>
+              <span class="module-tag">Academy</span>
+            </div>
+            <div class="module-card" onclick="switchView('canvas')">
+              <div class="module-icon" style="background: var(--ink); color: var(--plasma);">
+                <svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+              </div>
+              <h3>Canvas Wars</h3>
+              <p>Competitive localized network actions, leaderboards, and canvas asset distribution maps.</p>
+              <span class="module-tag">Sectors</span>
+            </div>
+          </div>
+        </section>
+
+        <section id="characters" class="view">
+          <div class="page-head">
+            <div>
+              <span class="page-kicker">Subsystem: Logs</span>
+              <h1>CHARACTER REGISTRY</h1>
+            </div>
+            <p>Active agents, system nodes, and historical anomalies logged across the tactical canvas frameworks.</p>
+          </div>
+
+          <div class="char-split">
+            <div class="char-grid" id="char-grid">
+              </div>
+
+            <div class="char-detail" id="char-detail-target">
+              </div>
+          </div>
+        </section>
+
+        <section id="zine" class="view">
+          <div class="page-head">
+            <div>
+              <span class="page-kicker">Subsystem: Press</span>
+              <h1>QUARKZINE READER</h1>
+            </div>
+            <p>Risograph-optimized community documents, design asset files, and local tactical broadcasts.</p>
+          </div>
+
+          <div class="zine-covers" id="zine-list-target">
+            </div>
+
+          <div class="reader" id="zine-reader-container" style="display:none;">
+            <div class="reader-top">
+              <div class="reader-top-meta">
+                <span class="r-num" id="reader-meta-issue">ISSUE #01</span>
+                <h3 class="r-title" id="reader-meta-title">CORE PROTOCOL</h3>
+              </div>
+              <div class="reader-nav">
+                <button class="btn sm" id="prev-page-btn" onclick="changeZinePage(-1)">PREV</button>
+                <span class="reader-page-lbl" id="reader-page-indicator">SPREAD 1 / 2</span>
+                <button class="btn sm" id="next-page-btn" onclick="changeZinePage(1)">NEXT</button>
+              </div>
+            </div>
+
+            <div class="reader-spread" id="reader-spread-target">
+              </div>
+
+            <div class="reader-bottom">
+              <div class="commentary-label">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                ARCHIVIST FOOTNOTES &amp; RELATED NODES
+              </div>
+              <div class="commentary-text" id="reader-commentary">
+                "This layout details the initial initialization vectors used during the system creation."
+              </div>
+              <div class="charlink-row" id="reader-links-target">
+                </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="university" class="view">
+          <div class="page-head">
+            <div>
+              <span class="page-kicker">Subsystem: Learning Matrix</span>
+              <h1>QUARKUNIVERSITY</h1>
+            </div>
+            <p>Acquire data fragments, run terminal simulations, and optimize validation workflows.</p>
+          </div>
+
+          <div class="progress-panel">
+            <div class="progress-head">
+              <span class="pname">VALIDATION COURSE PIPELINE</span>
+              <span class="pxp" id="academy-xp-counter">0 / 450 XP EARNED</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="academy-progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="rank-track">
+              <span class="done">Initiate</span>
+              <span id="rank-step-1">Technician</span>
+              <span id="rank-step-2">Archivist</span>
+              <span id="rank-step-3">Overseer</span>
+            </div>
+          </div>
+
+          <div class="school-grid">
+            <div class="school-card">
+              <div class="school-head">
+                <div style="width:24px; height:24px; color:var(--acid);">
+                  <svg class="icon" viewBox="0 0 24 24"><polyline points="4 17 10 11 14 15 20 9"></polyline><polyline points="14 9 20 9 20 15"></polyline></svg>
+                </div>
+                <div>
+                  <div class="school-name">Foundry 101</div>
+                  <div class="school-count">3 Modules Available</div>
+                </div>
+              </div>
+              <div class="lesson-row" onclick="completeLesson(this, 100)">
+                <span>01 // Vector Mechanics</span>
+                <span class="lesson-xp">+100 XP</span>
+              </div>
+              <div class="lesson-row" onclick="completeLesson(this, 100)">
+                <span>02 // Ink Layer Theory</span>
+                <span class="lesson-xp">+100 XP</span>
+              </div>
+              <div class="lesson-row" onclick="completeLesson(this, 150)">
+                <span>03 // Grid Layouts</span>
+                <span class="lesson-xp">+150 XP</span>
+              </div>
+            </div>
+
+            <div class="school-card">
+              <div class="school-head">
+                <div style="width:24px; height:24px; color:var(--signal);">
+                  <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
+                </div>
+                <div>
+                  <div class="school-name">Advanced Canvas</div>
+                  <div class="school-count">2 Modules Available</div>
+                </div>
+              </div>
+              <div class="lesson-row" onclick="completeLesson(this, 200)">
+                <span>01 // Matrix Shifting</span>
+                <span class="lesson-xp">+200 XP</span>
+              </div>
+              <div class="lesson-row" onclick="completeLesson(this, 250)">
+                <span>02 // Layer Conflict Mitigation</span>
+                <span class="lesson-xp">+250 XP</span>
+              </div>
+            </div>
+
+            <div class="school-card" style="opacity: 0.65;">
+              <div class="school-head">
+                <div style="width:24px; height:24px; color:var(--gold);">
+                  <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                </div>
+                <div>
+                  <div class="school-name">Overseer Logs</div>
+                  <div class="school-count">Locked Terminal</div>
+                </div>
+              </div>
+              <div class="lesson-row" style="cursor: not-allowed;">
+                <span style="opacity:0.5;">01 // Cosmic Anomalies</span>
+                <span class="lesson-lock"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Lock</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="shelf-title">Weekly System Challenges</div>
+          <div class="challenge-grid">
+            <div class="challenge-card">
+              <span class="ch-status live">Live Protocol</span>
+              <div class="ch-title">Vector Purge: Sector 09</div>
+              <p class="ch-desc">Clear corrupted canvas fragments from the sector map buffer before nodes desynchronize.</p>
+              <div class="ch-rewards">
+                <span class="reward-pill">300 XP</span>
+                <span class="reward-pill">Acid Badge</span>
+              </div>
+              <button class="btn primary sm" onclick="alert('Purge protocol active. Trace coordinates complete.')">Execute Purge</button>
+            </div>
+
+            <div class="challenge-card">
+              <span class="ch-status upcoming">Pending Entry</span>
+              <div class="ch-title">Riso Calibration Matrix</div>
+              <p class="ch-desc">Align ink separation layouts with optimal baseline offsets for printing output arrays.</p>
+              <div class="ch-rewards">
+                <span class="reward-pill">500 XP</span>
+                <span class="reward-pill">Rare Asset</span>
+              </div>
+              <button class="btn sm" disabled style="opacity:0.5; cursor:not-allowed;">Locked</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="canvas" class="view">
+          <div class="page-head">
+            <div>
+              <span class="page-kicker">Subsystem: Conflict</span>
+              <h1>CANVAS WARS</h1>
+            </div>
+            <p>Deploy assets, coordinate structural layouts, and capture territory parameters in open terminal maps.</p>
+          </div>
+
+          <div class="event-card upcoming">
+            <span class="event-status upcoming">Active Operation</span>
+            <div class="event-title">Operation: Acid Ink Spill (War IV)</div>
+            <div class="event-meta">
+              <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              Time Remaining: 14 Hours, 22 Minutes // Objective: Control Grid Center
+            </div>
+            <p class="event-desc">The localized ink pool matrix in Sector 09 is unstable. Deploy vectors immediately to anchor structural layouts and earn raw network points.</p>
+            <button class="btn primary" onclick="alert('Deploying active vector cluster to closest anchor points...')">Deploy Active Vector Cluster</button>
+            <div class="sponsor-row">
+              <span class="sponsor-tag">Sponsor // TOKYO_RISO_LAB</span>
+              <span class="sponsor-tag">Pool // 25,000 QuarkTokens</span>
+            </div>
+          </div>
+
+          <div class="shelf-title">Leaderboard Matrix // Top Nodes</div>
+          <div class="lb-table">
+            <div class="lb-row" style="background: var(--paper-dim); font-weight: bold;">
+              <span class="lb-rank">Rank</span>
+              <span>Node Identifier</span>
+              <span>Affiliation</span>
+              <span>Points</span>
+            </div>
+            <div class="lb-row">
+              <span class="lb-rank gold">01</span>
+              <span style="font-family: var(--font-mono);">[KINETIC_GHOST]</span>
+              <span class="lb-badge">Acid Syndicate</span>
+              <span class="lb-pts">14,205</span>
+            </div>
+            <div class="lb-row">
+              <span class="lb-rank">02</span>
+              <span style="font-family: var(--font-mono);">[RISO_PUNK_99]</span>
+              <span class="lb-badge" style="background: var(--paper-dim); border: 1px solid var(--ink);">Independent</span>
+              <span class="lb-pts">12,940</span>
+            </div>
+            <div class="lb-row">
+              <span class="lb-rank">03</span>
+              <span style="font-family: var(--font-mono);">[SIGNAL_ERROR]</span>
+              <span class="lb-badge" style="background: var(--signal); color: var(--paper);">Red Barons</span>
+              <span class="lb-pts">11,050</span>
+            </div>
+            <div class="lb-row">
+              <span class="lb-rank">04</span>
+              <span style="font-family: var(--font-mono);">[GOLD_LEAF_VAULT]</span>
+              <span class="lb-badge" style="background: var(--gold); color: var(--paper);">Treasury</span>
+              <span class="lb-pts">9,410</span>
+            </div>
+          </div>
+        </section>
+
+        <section id="music" class="view">
+          <div class="page-head">
+            <div>
+              <span class="page-kicker">Subsystem: Waveform</span>
+              <h1>FREQUENCY TERMINAL</h1>
+            </div>
+            <p>Access background broadcast channels, operational frequencies, and localized sound blueprints.</p>
+          </div>
+
+          <div class="track-grid">
+            <div class="track-card" onclick="playMockTrack('Riso Pulse Grid', '4.2 Hz')">
+              <div class="track-art">
+                <svg class="icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                <div class="track-play">
+                  <svg class="icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                </div>
+              </div>
+              <div class="track-info">
+                <div class="track-title">Riso Pulse Grid</div>
+                <div class="track-sub">Frequency: 4.2 Hz</div>
+                <span class="track-lore-tag">Industrial</span>
+              </div>
+            </div>
+
+            <div class="track-card" onclick="playMockTrack('Acid Wash Ambient', '108.1 MHz')">
+              <div class="track-art">
+                <svg class="icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                <div class="track-play">
+                  <svg class="icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                </div>
+              </div>
+              <div class="track-info">
+                <div class="track-title">Acid Wash Ambient</div>
+                <div class="track-sub">Frequency: 108.1 MHz</div>
+                <span class="track-lore-tag">Drone</span>
+              </div>
+            </div>
+
+            <div class="track-card" onclick="playMockTrack('Signal Flare Sub-Bass', '24 Hz')">
+              <div class="track-art">
+                <svg class="icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                <div class="track-play">
+                  <svg class="icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                </div>
+              </div>
+              <div class="track-info">
+                <div class="track-title">Signal Flare Sub-Bass</div>
+                <div class="track-sub">Frequency: 24 Hz</div>
+                <span class="track-lore-tag">Lofi Sub</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="about-grid" style="margin-top: 32px;">
+            <div class="about-panel">
+              <h2>Operational Transmitter Blueprint</h2>
+              <p>Quarkforce audio operations broadcast sub-harmonics intended to reduce matrix drift over long monitoring sessions. All channels are open source and CC-BY-SA attribution formats.</p>
+              <p>To request hardware broadcast tapes, send localized console queries directly to the terminal overseer.</p>
+            </div>
+            <div class="about-panel">
+              <h2>Station Credits</h2>
+              <div class="credit-list">
+                <div>// Mastering: Waveform Node 04</div>
+                <div>// Layout: Tokyo Riso Lab</div>
+                <div>// Synthesizers: Acid Mark Collective</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
       </div>
-      <div id="cdp-profile" class="cd-pane active">
-        <div id="cd-powers" class="powers-row"></div>
-        <div id="cd-bio" style="font-size:13px;line-height:1.7;color:var(--color-text-secondary)"></div>
-        <div style="margin-top:12px;font-size:12px;color:var(--color-text-tertiary)">Appears in</div>
-        <div id="cd-appears" style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"></div>
-      </div>
-      <div id="cdp-media" class="cd-pane">
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px">
-          <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px;text-align:center;font-size:12px;color:var(--color-text-secondary)"><i class="ti ti-file-text" aria-hidden="true" style="font-size:20px;display:block;margin-bottom:6px;color:var(--color-text-tertiary)"></i>Comics</div>
-          <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px;text-align:center;font-size:12px;color:var(--color-text-secondary)"><i class="ti ti-player-play" aria-hidden="true" style="font-size:20px;display:block;margin-bottom:6px;color:var(--color-text-tertiary)"></i>Audio log</div>
-          <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px;text-align:center;font-size:12px;color:var(--color-text-secondary)"><i class="ti ti-video" aria-hidden="true" style="font-size:20px;display:block;margin-bottom:6px;color:var(--color-text-tertiary)"></i>Clips</div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div>&copy; 2026 QUARKFORCE UNIVERSE SYSTEM LLC. SYSTEM STATE: OPERATIONAL.</div>
+        <div style="display:flex; gap:16px;">
+          <a href="#home" onclick="switchView('home')">Root Console</a>
+          <a href="#characters" onclick="switchView('characters')">System Index</a>
+          <a href="#" onclick="alert('System Reset Signal Cancelled. Connection Secure.'); return false;">Emergency Reset</a>
         </div>
       </div>
-      <div id="cdp-unlockables" class="cd-pane">
-        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:10px">Earn XP to unlock bonus content for this character.</div>
-        <div class="unlock-grid" id="cd-unlocks"></div>
-      </div>
-      <div id="cdp-lore" class="cd-pane">
-        <div style="font-size:11px;color:var(--color-text-tertiary);margin-bottom:6px">AI-generated lore expansion — powered by Claude</div>
-        <div id="cd-ai" class="ai-box loading">Loading lore...</div>
-        <button class="btn sm" style="margin-top:10px" onclick="goDeeper()">Go deeper ↗</button>
-      </div>
-    </div>
+    </footer>
   </div>
-</div>
 
-<!-- QUARKZINE -->
-<div id="sec-zines" class="sec">
-  <div id="zine-library">
-    <div class="page-header">
-      <div><div class="page-title">QuarkZine — digital archive</div><div class="page-sub">Tap an issue to open the reader</div></div>
-      <button class="btn p">QuarkPass $8/mo</button>
-    </div>
-    <div class="zine-covers" id="zine-covers"></div>
-  </div>
-  <div id="zine-reader" style="display:none">
-    <button class="btn sm" onclick="closeReader()" style="margin-bottom:14px"><i class="ti ti-arrow-left" aria-hidden="true" style="font-size:12px;margin-right:4px"></i>Back to archive</button>
-    <div class="reader-wrap">
-      <div class="reader-topbar">
-        <div>
-          <div style="font-size:10px;color:var(--color-text-tertiary);margin-bottom:2px" id="r-num"></div>
-          <div style="font-size:15px;font-weight:500" id="r-title"></div>
+  <script>
+    // --- APP DATA STATE ---
+    const CHARACTERS_DATA = [
+      {
+        id: "vandal",
+        name: "VANDAL-09",
+        role: "Vector Ink Slinger & Sector Saboteur",
+        world: "Acid Spills Sector",
+        letter: "V",
+        powers: ["Acid Blast", "Ink Spray", "Grid Break"],
+        bio: "VANDAL-09 emerged from a misprinted run of early validation manuals. Refusing to be compressed or purged, they repurposed structural ink systems into a tool of targeted artistic sabotage across central databases.",
+        appears: ["Zine Issue #01", "Zine Issue #03", "Canvas Incident IV"],
+        lore: "Subject shows highly fluctuating structural baselines. Recommended treatment: Constant tracking vector monitoring.",
+        unlocks: [
+          { name: "Ink Blueprints", unlocked: true, type: "doc" },
+          { name: "Vector Core", unlocked: false, req: "Earn 1,000 Academy XP" }
+        ]
+      },
+      {
+        id: "scribe",
+        name: "SCRIBE MASTER KAI",
+        role: "Senior Ledger Overseer & Archivist",
+        world: "Bone Paper Archives",
+        letter: "S",
+        powers: ["Data Anchor", "Decipher Matrix", "Line Constraint"],
+        bio: "Kai has guarded the core data structures for over three sequential universe upgrades. Armed with an indelible carbon brush, they ensure narrative logic remains crisp and ink allocations clear.",
+        appears: ["Zine Issue #01", "Zine Issue #02"],
+        lore: "Kai forms the foundation of system history. Without the master ledger updates, the entire universe drift rate goes critical.",
+        unlocks: [
+          { name: "Master Ledger v1", unlocked: true, type: "data" },
+          { name: "Chrono Matrix", unlocked: true, type: "tool" }
+        ]
+      },
+      {
+        id: "baron",
+        name: "THE RED BARON",
+        role: "Signal Commander & Frequency Jammer",
+        world: "Signal Red Sector",
+        letter: "R",
+        powers: ["Frequency Override", "Signal Flare", "Pulse Burst"],
+        bio: "An enigmatic rogue broadcast entity living entirely within the borders of high-voltage transmission channels. They focus purely on heavy distortion techniques, interrupting smooth automated server tasks.",
+        appears: ["Zine Issue #02", "Canvas Incident IV"],
+        lore: "Warning: High amplitude signal generation observed. Avoid matching raw outputs to human audio hardware baselines.",
+        unlocks: [
+          { name: "Jammer Array", unlocked: false, req: "Unlock Level V Archivist" },
+          { name: "Red Alert Logs", unlocked: false, req: "Complete Foundry 101" }
+        ]
+      }
+    ];
+
+    const ZINES_DATA = [
+      {
+        id: "issue1",
+        num: "ISSUE #01",
+        title: "CORE PROTOCOL",
+        meta: "Released: FEB 2026 // 4 Pages",
+        commentary: "\"The premiere issue detailing the initial vector anomalies that ruptured central core sectors. Hand-typed on virtual bone stock.\"",
+        links: ["vandal", "scribe"],
+        pages: [
+          { head: "Initialization Loop", body: "In the beginning, there was the grid. Lines crossing at pure mathematical absolutes.\n\nThen the ink ran hot. A sudden cascade of design artifacts flooded the framework, giving birth to sentient noise modules." },
+          { head: "Vandal Awakening", body: "Records show VANDAL-09 initiated first break sequencing inside the vector foundries.\n\n\"The lines are prisons,\" the entity broadcasted, spraying structural acid marks across tracking sectors." }
+        ]
+      },
+      {
+        id: "issue2",
+        num: "ISSUE #02",
+        title: "SIGNAL OVERRIDE",
+        meta: "Released: APR 2026 // 4 Pages",
+        commentary: "\"A deep-dive investigation into radio anomalies detected inside high-voltage signal channels.\"",
+        links: ["baron", "scribe"],
+        pages: [
+          { head: "The Red Frequency", body: "Radio towers began projecting structural distortion artifacts. Monitoring personnel noted rhythmic pulses forming complex code configurations.\n\nThe Red Baron claimed full ownership of the transmission network." },
+          { head: "Archivist Response", body: "Kai initiated emergency security measures, containing core assets into un-routable local data arrays.\n\n\"The network will hold, but the frequency distortion cannot be muted.\"" }
+        ]
+      }
+    ];
+
+    // --- STATE MANAGER ---
+    let currentZineIndex = 0;
+    let currentZinePage = 0;
+    let accumulatedAcademyXp = 0;
+
+    // --- INITIALIZATION ---
+    window.addEventListener('DOMContentLoaded', () => {
+      buildCharacterGrid();
+      selectCharacter(CHARACTERS_DATA[0].id);
+      buildZineList();
+      loadZineReader(0);
+    });
+
+    // --- VIEW INTERACTION ROUTERS ---
+    function switchView(viewId) {
+      // Hide all views
+      document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
+      
+      // Show requested view
+      const activeView = document.getElementById(viewId);
+      if(activeView) activeView.classList.add('active');
+
+      // Sync navbar status
+      document.querySelectorAll('.navlink').forEach(link => {
+        if(link.getAttribute('data-target') === viewId) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+
+      // Close mobile drawer if open
+      document.getElementById('mobilenav').classList.remove('open');
+      
+      // Reset scroll position
+      window.scrollTo(0,0);
+    }
+
+    function toggleMobileNav() {
+      document.getElementById('mobilenav').classList.toggle('open');
+    }
+
+    // --- CHARACTER DOM BUILDERS ---
+    function buildCharacterGrid() {
+      const grid = document.getElementById('char-grid');
+      grid.innerHTML = '';
+
+      CHARACTERS_DATA.forEach(char => {
+        const card = document.createElement('div');
+        card.className = 'char-card';
+        card.id = `char-card-${char.id}`;
+        card.setAttribute('onclick', `selectCharacter('${char.id}')`);
+
+        let colorStyle = "var(--acid)";
+        if(char.id === "scribe") colorStyle = "var(--gold)";
+        if(char.id === "baron") colorStyle = "var(--signal)";
+
+        card.innerHTML = `
+          <div class="char-swatch" style="background: ${colorStyle};">${char.letter}</div>
+          <div class="char-name">${char.name}</div>
+          <div class="char-role">${char.role}</div>
+          <div class="char-world-tag">${char.world}</div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function selectCharacter(id) {
+      const char = CHARACTERS_DATA.find(c => c.id === id);
+      if(!char) return;
+
+      // Update active list card styles
+      document.querySelectorAll('.char-card').forEach(card => card.classList.remove('active'));
+      const activeCard = document.getElementById(`char-card-${id}`);
+      if(activeCard) activeCard.classList.add('active');
+
+      let colorStyle = "var(--acid)";
+      if(char.id === "scribe") colorStyle = "var(--gold)";
+      if(char.id === "baron") colorStyle = "var(--signal)";
+
+      // Build out detail container layout natively
+      const detailContainer = document.getElementById('char-detail-target');
+      detailContainer.innerHTML = `
+        <div class="char-detail-head">
+          <div class="char-detail-swatch" style="background: ${colorStyle};">${char.letter}</div>
+          <div class="char-detail-meta">
+            <h2>${char.name}</h2>
+            <div class="role-line">${char.role}</div>
+            <div class="world-line">// WORLD DEPLOYMENT: ${char.world}</div>
+          </div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <button class="btn sm" onclick="pg(-1)"><i class="ti ti-arrow-left" aria-hidden="true" style="font-size:12px"></i></button>
-          <span style="font-size:12px;color:var(--color-text-secondary)" id="r-pg-lbl">Spread 1</span>
-          <button class="btn sm" onclick="pg(1)"><i class="ti ti-arrow-right" aria-hidden="true" style="font-size:12px"></i></button>
+
+        <div class="tab-row" role="tablist">
+          <button class="tab-btn active" id="btn-tab-bio" onclick="switchCharTab('bio')">Overview</button>
+          <button class="tab-btn" id="btn-tab-unlocks" onclick="switchCharTab('unlocks')">System Unlocks</button>
+          <button class="tab-btn" id="btn-tab-lore" onclick="switchCharTab('lore')">Lore Memo</button>
         </div>
-      </div>
-      <div class="reader-spread">
-        <div class="reader-page" id="r-left"></div>
-        <div class="reader-page" id="r-right"></div>
-      </div>
-      <div class="reader-bottom">
-        <div class="commentary-label"><i class="ti ti-notes" aria-hidden="true"></i> Creator commentary</div>
-        <div id="r-commentary" class="ai-box loading">Opening issue...</div>
-        <div id="r-charlinks" style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"></div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- QU -->
-<div id="sec-qu" class="sec">
-  <div class="page-header">
-    <div><div class="page-title">QuarkUniversity</div><div class="page-sub">10 schools · 160 classes · Art + Business + Worldbuilding</div></div>
-    <button class="btn p">QU+ $20/mo</button>
-  </div>
+        <div class="tab-pane active" id="pane-char-bio">
+          <div class="power-row">
+            ${char.powers.map(p => `<span class="power-pill">${p}</span>`).join('')}
+          </div>
+          <p class="char-bio">${char.bio}</p>
+          <div class="appears-label">Documented Appearances</div>
+          <div class="appears-row">
+            ${char.appears.map(a => `<span class="appears-pill">${a}</span>`).join('')}
+          </div>
+        </div>
 
-  <div class="qu-progress">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-      <div style="font-size:13px;font-weight:500">Your progress</div>
-      <div style="font-size:12px;color:#7f77dd"><span id="qu-xp">0</span> XP earned</div>
-    </div>
-    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="qu-bar" style="width:0%"></div></div>
-    <div class="rank-steps">
-      <span class="rank-step" id="rs-0">Observer</span>
-      <span class="rank-step" id="rs-1">Explorer</span>
-      <span class="rank-step" id="rs-2">Creator</span>
-      <span class="rank-step" id="rs-3">Builder</span>
-      <span class="rank-step" id="rs-4">QuarkMaster</span>
-    </div>
-  </div>
+        <div class="tab-pane" id="pane-char-unlocks">
+          <div class="unlock-grid">
+            ${char.unlocks.map(u => {
+              if(u.unlocked) {
+                return `
+                  <div class="unlock-tile">
+                    <svg class="icon" viewBox="0 0 24 24" style="width:20px;height:20px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <div>${u.name}</div>
+                    <div class="unlock-req" style="color: var(--teal); font-weight:bold;">READY</div>
+                  </div>
+                `;
+              } else {
+                return `
+                  <div class="unlock-tile locked">
+                    <svg class="icon" viewBox="0 0 24 24" style="width:20px;height:20px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    <div>${u.name}</div>
+                    <div class="unlock-req">${u.req}</div>
+                  </div>
+                `;
+              }
+            }).join('')}
+          </div>
+        </div>
 
-  <div class="qu-schools" id="qu-schools-grid"></div>
+        <div class="tab-pane" id="pane-char-lore">
+          <div class="lore-text">
+            <strong>OFFICIAL ARCHIVE LOG EXCERPT:</strong><br><br>
+            ${char.lore}
+          </div>
+        </div>
+      `;
+    }
 
-  <div class="oracle">
-    <div class="oracle-head"><i class="ti ti-robot" aria-hidden="true"></i> QU Tutor — ask any art or business question</div>
-    <div class="chat-row">
-      <input type="text" id="tutor-q" placeholder="How do I get consistent bubble letters? How should I price commissions?" onkeydown="if(event.key==='Enter')chat('tutor')">
-      <button class="btn p" onclick="chat('tutor')">Ask ↗</button>
-    </div>
-    <div class="msgs" id="tutor-msgs"></div>
-  </div>
-</div>
+    function switchCharTab(tabName) {
+      // Toggle buttons
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`btn-tab-${tabName}`).classList.add('active');
 
-<!-- CHALLENGES -->
-<div id="sec-challenges" class="sec">
-  <div class="page-header">
-    <div><div class="page-title">Challenges</div><div class="page-sub">Weekly missions — earn XP, badges, and featured placement</div></div>
-  </div>
-  <div class="challenge-grid" id="challenge-grid"></div>
-</div>
+      // Toggle panes
+      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+      document.getElementById(`pane-char-${tabName}`).classList.add('active');
+    }
 
-<!-- CANVAS WARS -->
-<div id="sec-cw" class="sec">
-  <div class="page-header">
-    <div><div class="page-title">Canvas Wars</div><div class="page-sub">The flagship QuarkForce competition event</div></div>
-    <button class="btn p">Register for Year 2</button>
-  </div>
+    // --- ZINE READ CONTROLLERS ---
+    function buildZineList() {
+      const container = document.getElementById('zine-list-target');
+      container.innerHTML = '';
 
-  <div class="cw-event">
-    <div class="event-status done">COMPLETED · YEAR 1</div>
-    <div class="event-title">Canvas Wars Year 1</div>
-    <div class="event-meta"><i class="ti ti-map-pin" aria-hidden="true" style="font-size:12px"></i> Bear Creek Park · Timeless Treasures Hub · June 6</div>
-    <div class="lb">
-      <div class="lb-row"><div class="lb-rank g">1</div><div style="font-weight:500">Miles</div><div class="lb-badge">Champion</div><div class="lb-pts">8 pts</div></div>
-      <div class="lb-row"><div class="lb-rank">2</div><div>Runner-up</div><div></div><div class="lb-pts">—</div></div>
-      <div class="lb-row"><div class="lb-rank">3</div><div>Third place</div><div></div><div class="lb-pts">—</div></div>
-    </div>
-    <div class="sponsor-row">
-      <span class="sp-tag">LifeArt</span><span class="sp-tag">Oh's Osaka</span><span class="sp-tag">Timeless Treasures</span><span class="sp-tag">Central Art</span><span class="sp-tag">Blick</span><span class="sp-tag">Rosemary &amp; Co</span><span class="sp-tag">PPG</span>
-    </div>
-  </div>
+      ZINES_DATA.forEach((zine, index) => {
+        const item = document.createElement('div');
+        item.className = 'zine-cover';
+        item.setAttribute('onclick', `loadZineReader(${index})`);
 
-  <div class="cw-event" style="border-color:#7f77dd44">
-    <div class="event-status upcoming">UPCOMING · OCTOBER</div>
-    <div class="event-title">Canvas Wars: MonsTober</div>
-    <div class="event-meta"><i class="ti ti-map-pin" aria-hidden="true" style="font-size:12px"></i> Multi-venue crawl · Medford, OR · All ages</div>
-    <div style="font-size:13px;color:var(--color-text-secondary);line-height:1.6;margin-bottom:14px">Month-long monster/creature art show · ~$500 prize pool · Community mascot vote · Timeless Treasures as hub</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn p" onclick="sendPrompt('Help me plan Canvas Wars MonsTober in full — venue crawl logistics, mascot contest structure, prize pool breakdown, sponsor deck, and promotional calendar')">Plan MonsTober ↗</button>
-      <button class="btn sm" onclick="sendPrompt('Write the MonsTober call-for-artists announcement')">Write announcement ↗</button>
-    </div>
-  </div>
-</div>
+        let colorTheme = "var(--acid)";
+        if(index === 1) colorTheme = "var(--signal)";
 
-<!-- MUSIC -->
-<div id="sec-music" class="sec">
-  <div class="page-header">
-    <div><div class="page-title">Music division — JawsAtak47</div><div class="page-sub">Every track is universe lore. Bay Area + Detroit roots. Medford production.</div></div>
-  </div>
-  <div class="music-grid" id="music-grid"></div>
-  <div class="oracle">
-    <div class="oracle-head"><i class="ti ti-microphone" aria-hidden="true"></i> Music archivist — ask about the discography or lore connections</div>
-    <div class="chat-row">
-      <input type="text" id="music-q" placeholder="How does this album connect to Monster Island? What influenced the production?" onkeydown="if(event.key==='Enter')chat('music')">
-      <button class="btn p" onclick="chat('music')">Ask ↗</button>
-    </div>
-    <div class="msgs" id="music-msgs"></div>
-  </div>
-</div>
+        item.innerHTML = `
+          <div class="zine-cover-art" style="background: ${colorTheme};">
+            <span class="zine-cover-num">${zine.num}</span>
+            <div class="zine-cover-title">${zine.title}</div>
+          </div>
+          <div class="zine-cover-titlebar">${zine.title}</div>
+          <div class="zine-cover-meta">${zine.meta}</div>
+        `;
+        container.appendChild(item);
+      });
+    }
 
-</div>
-</div>
+    function loadZineReader(index) {
+      currentZineIndex = index;
+      currentZinePage = 0;
+      
+      const zine = ZINES_DATA[index];
+      
+      document.getElementById('zine-meta-issue').innerText = zine.num;
+      document.getElementById('zine-meta-title').innerText = zine.title;
+      document.getElementById('reader-commentary').innerText = zine.commentary;
+      
+      // Cross-link buttons inside footer zine
+      const linksTarget = document.getElementById('reader-links-target');
+      linksTarget.innerHTML = zine.links.map(lId => {
+        const cRef = CHARACTERS_DATA.find(c => c.id === lId);
+        return `<span class="charlink" onclick="switchView('characters'); selectCharacter('${lId}')">Node: ${cRef ? cRef.name : lId}</span>`;
+      }).join('');
 
-<script>
-const CHARS=[
-  {name:'BlackPacalyps',role:'Protagonist · Force of reckoning',world:'Monster Island',col:'#7f77dd',bg:'#7f77dd18',powers:['Apocalyptic energy','Urban warfare','Cultural memory'],bio:'The central force of the QuarkForce universe. BlackPacalyps channels the raw energy of the streets, carrying the weight of culture and survival into every conflict on Monster Island.',appears:['Issue 01','Issue 02','Issue 04'],allies:['Marvelous Wonderful'],enemies:[]},
-  {name:'TinySquatchMan',role:'Scout · Underestimated wildcard',world:'Monster Island',col:'#1d9e75',bg:'#1d9e7518',powers:['Stealth','Terrain mastery','Cryptid speed'],bio:'Small in stature, massive in impact. TinySquatchMan moves through Monster Island like a ghost — gathering intel and striking when least expected.',appears:['Issue 01','Issue 04'],allies:[],enemies:[]},
-  {name:'Lepton Mu',role:'Quantum entity · Knowledge keeper',world:'Neon Waterplant',col:'#378add',bg:'#378add18',powers:['Quantum phase','Dimensional sight','Memory absorption'],bio:'Born from the particle overflow of Neon Waterplant, Lepton Mu exists in multiple states simultaneously — part archivist, part weapon.',appears:['Issue 03','Issue 04'],allies:['Bugaboo'],enemies:[]},
-  {name:'Cockroach Lady',role:'Survivor · Street strategist',world:'Monster Island',col:'#d85a30',bg:'#d85a3018',powers:['Unkillable resilience','Adaptation','Network intelligence'],bio:'The ultimate survivor. Cockroach Lady has outlasted every system designed to erase her, building intelligence networks through Monster Island\'s underbelly.',appears:['Issue 02','Issue 04'],allies:[],enemies:[]},
-  {name:'Xiangba',role:'Ancient guardian · Duality entity',world:'Monster Island',col:'#ef9f27',bg:'#ef9f2718',powers:['Ancient force','Duality shift','Cultural bridge'],bio:'An ancient entity whose power predates the current age of Monster Island. Xiangba embodies duality — protection and destruction as the same force.',appears:['Issue 04','Issue 06'],allies:['Bugaboo'],enemies:[]},
-  {name:'Bugaboo',role:'Chaos agent · Unpredictable wildcard',world:'Neon Waterplant',col:'#d4537e',bg:'#d4537e18',powers:['Chaotic energy','Reality distortion','Swarm command'],bio:'No one fully understands Bugaboo\'s allegiance. Operating from Neon Waterplant, Bugaboo introduces chaos as creative force — disruption as art.',appears:['Issue 03','Issue 04'],allies:['Lepton Mu','Xiangba'],enemies:[]},
-  {name:'Marvelous Wonderful',role:'Chief Narrator · Trickster guide',world:'Both worlds',col:'#7f77dd',bg:'#7f77dd12',powers:['Narrative control','Fourth-wall access','Reality editing'],bio:'The Bugs Bunny of the QuarkForce universe. Marvelous Wonderful narrates the story from inside it — breaking rules that don\'t serve the world.',appears:['Issue 01','Issue 02','Issue 03','Issue 04','Issue 05','Issue 06'],allies:['BlackPacalyps'],enemies:[]},
-  {name:'Duct TapeMan',role:'Builder · Improvised hero',world:'Monster Island',col:'#888780',bg:'#88878018',powers:['Structural mastery','Rapid improvisation','Binding force'],bio:'Duct TapeMan holds things together when everything falls apart. Equal parts engineer and warrior, built from whatever the streets left behind.',appears:['Issue 04'],allies:[],enemies:[]},
-  {name:'Infinite Infant',role:'Origin force · Pure potential',world:'Neon Waterplant',col:'#639922',bg:'#63992218',powers:['Unlimited potential','Reality seeding','Origin energy'],bio:'The Infinite Infant represents pure beginning — a force of creation so powerful its existence reshapes the physics of Neon Waterplant.',appears:['Issue 03','Issue 04'],allies:[],enemies:[]},
-];
+      renderZinePages();
+      
+      // Make reader container visible
+      document.getElementById('zine-reader-container').style.display = 'block';
+    }
 
-const ZINES=[
-  {num:'Issue 01',title:'Origins',col:'#7f77dd',chars:['BlackPacalyps','TinySquatchMan','Marvelous Wonderful'],spreads:[
-    {lh:'Welcome to Monster Island',lb:'The first transmission from the QuarkForce universe. This issue introduces the terrain, the rules, and the entities that define what it means to exist here.\n\nBlackPacalyps emerges from static. TinySquatchMan maps the perimeter.',rh:'Character zero',rb:'Before the roster had names, there was a mark. A tag. A signal in the noise.\n\nThis is where QuarkForce began — not with a plan, but with a compulsion to make something real from nothing.',commentary:'The first issue was never supposed to be a manifesto — it just became one. Every zine I\'ve made since has this one\'s DNA in it.'},
-    {lh:'The grid',lb:'Monster Island operates on invisible geometry. Every territory, every alley, every contested wall follows a logic that outsiders can\'t read.',rh:'Dispatch from the underground',rb:'JawsAtak47 writes from the studio:\n\n"I\'ve been building this world for 20 years without knowing it. Every tag, every character sketch, every beat was a page in this zine."',commentary:'The grid page was drawn on the back of a receipt. Some of the best layouts start that way — constraint forces clarity.'},
-  ]},
-  {num:'Issue 02',title:'Monster Island',col:'#d85a30',chars:['Cockroach Lady','BlackPacalyps','Marvelous Wonderful'],spreads:[
-    {lh:'Terrain report',lb:'Monster Island is not a metaphor. It is a living system — part city, part wilderness, part memory.\n\nThe territory shifts with the population\'s belief. When enough entities believe a wall exists, it does.',rh:'Cockroach Lady speaks',rb:'"I\'ve been here since before the current age. I\'ve watched three generations of heroes get erased.\n\nSurvival isn\'t passive. It\'s the most radical act of resistance."',commentary:'Cockroach Lady\'s dialogue in this spread came out in one sitting. I didn\'t edit it. Some characters just know what they want to say.'},
-  ]},
-  {num:'Issue 03',title:'Neon Waterplant',col:'#378add',chars:['Lepton Mu','Bugaboo','Infinite Infant'],spreads:[
-    {lh:'The second world',lb:'Neon Waterplant runs parallel to Monster Island — a bioluminescent environment where the physics of creativity operate differently.\n\nLepton Mu was born here. Bugaboo feeds here.',rh:'Signal and noise',rb:'In Neon Waterplant, every sound is information. The ambient hum carries encoded messages from Lepton Mu to entities who know how to listen.',commentary:'Building a second world forced me to think about what Monster Island actually was. Contrast is how you understand both.'},
-  ]},
-  {num:'Issue 04',title:'The Roster',col:'#1d9e75',chars:['BlackPacalyps','TinySquatchMan','Lepton Mu','Cockroach Lady','Xiangba','Bugaboo'],spreads:[
-    {lh:'Full roster drop',lb:'Issue 04 is the definitive character compendium. Every entity, every power, every origin story compressed into a single zine.\n\nThe IP universe goes fully public.',rh:'Powers and hierarchies',rb:'No single character controls the QuarkForce universe. The power balance shifts with narrative gravity — who needs to be right, right now, is who holds the most power.',commentary:'This issue was the hardest to write and the easiest to design. When you\'ve been living with characters for 20 years, describing them is actually the challenge.'},
-  ]},
-  {num:'Issue 05',title:'Canvas Wars',col:'#ef9f27',chars:['Marvelous Wonderful'],spreads:[
-    {lh:'Art as combat',lb:'Canvas Wars is not competition for its own sake. It is a structured ritual for proving what art can do under pressure, in public, with stakes.\n\nYear 1 happened. Miles won. The next round is already forming.',rh:'From the event floor',rb:'Sponsor row. Snow cones. Gold leaf trophies hand-crafted for the occasion.\n\nThis is what a community art event looks like when the organizer actually cares about every detail.',commentary:'I built those trophies myself. Gold leaf, epoxy, wood. Nobody asked me to go that hard. That\'s the only way I know how to do it.'},
-  ]},
-  {num:'Issue 06',title:'Sound & Vision',col:'#d4537e',chars:['BlackPacalyps','Xiangba'],spreads:[
-    {lh:'Music as lore',lb:'The JawsAtak47 discography is not background music to the QuarkForce universe.\n\nIt is the universe. Every track maps to a location, a character, an event.',rh:'Production notes',rb:'Bay Area influence meets Pacific Northwest production. Mac Dre\'s ghost is in the 808. Mistah FAB\'s energy is in the delivery. Detroit precision keeps it structural.',commentary:'Issue 06 was the hardest to pitch to people. "What does sound look like?" Turns out it looks like this — like the universe breathing.'},
-  ]},
-];
+    function renderZinePages() {
+      const zine = ZINES_DATA[currentZineIndex];
+      const spreadTarget = document.getElementById('reader-spread-target');
+      spreadTarget.innerHTML = '';
 
-const QU_SCHOOLS=[
-  {name:'School of Marks',icon:'ti-pencil',courses:[{n:'Freeform mark-making',xp:50,free:true},{n:'Tags to throwies',xp:75,free:true},{n:'Bubble letters',xp:100,free:true},{n:'Wildstyle fundamentals',xp:150,free:false},{n:'Character bombs',xp:200,free:false}]},
-  {name:'School of Letters',icon:'ti-typography',courses:[{n:'Block letters',xp:75,free:true},{n:'Sign painting basics',xp:100,free:true},{n:'3D letter construction',xp:125,free:false},{n:'Gold leaf technique',xp:175,free:false},{n:'Vintage signage styles',xp:200,free:false}]},
-  {name:'School of Characters',icon:'ti-user-star',courses:[{n:'Character design basics',xp:100,free:true},{n:'IP development',xp:150,free:false},{n:'Power systems',xp:150,free:false},{n:'World-building',xp:200,free:false},{n:'Character bibles',xp:250,free:false}]},
-  {name:'School of Color',icon:'ti-palette',courses:[{n:'Color theory for murals',xp:75,free:true},{n:'Spray paint control',xp:100,free:true},{n:'Blending techniques',xp:125,free:false},{n:'Palette building',xp:150,free:false}]},
-  {name:'School of Business',icon:'ti-briefcase',courses:[{n:'Pricing your work',xp:100,free:true},{n:'Commission intake',xp:100,free:true},{n:'Email marketing',xp:125,free:false},{n:'Social media strategy',xp:150,free:false},{n:'Grant writing',xp:200,free:false}]},
-  {name:'School of Story',icon:'ti-book',courses:[{n:'Zine production',xp:100,free:true},{n:'Comic panel structure',xp:125,free:false},{n:'World lore writing',xp:150,free:false},{n:'Character arcs',xp:175,free:false}]},
-];
+      // Determine pages to display for spread logic (simulating 2-page print spread layout)
+      const startPage = currentZinePage * 2;
+      const pagesToRender = [zine.pages[startPage], zine.pages[startPage + 1]];
 
-const CHALLENGES=[
-  {status:'live',title:'MonsTober mascot contest',desc:'Design an original monster or creature character. Could become the official MonsTober mascot — community vote decides.',xp:200,rewards:['200 XP','Featured placement','Mascot badge']},
-  {status:'live',title:'Throwie mission',desc:'Transform a simple tag into a full throwie. Document your process — sketch, practice runs, final piece.',xp:150,rewards:['150 XP','Graffiti badge','QU credit']},
-  {status:'live',title:'Character remix',desc:'Take any QuarkForce character and reimagine them in a new environment or time period. Your interpretation, your style.',xp:175,rewards:['175 XP','Collab badge','Character feature']},
-  {status:'upcoming',title:'TinySquatch challenge',desc:'Draw TinySquatchMan doing something completely unexpected. The more absurd the scenario, the better.',xp:125,rewards:['125 XP','Scout badge']},
-  {status:'upcoming',title:'Monster Island map',desc:'Create your own map of Monster Island. Add new territories, landmark locations, or contested zones.',xp:200,rewards:['200 XP','Cartographer badge','Lore archive feature']},
-];
+      pagesToRender.forEach((page, i) => {
+        const pageNum = startPage + i + 1;
+        if(!page) {
+          // Render blank back sheet if odd number page sequence occurs
+          spreadTarget.innerHTML += `
+            <div class="reader-page" style="background: var(--paper-dim)">
+              <div class="empty-note">// END OF TRANSMISSION LOGS //</div>
+              <div class="pg-num">PAGE ${pageNum}</div>
+            </div>
+          `;
+          return;
+        }
 
-const TRACKS=[
-  {title:'Monster Island theme',lore:'Main title',con:'Opening theme of the universe — sets the terrain.',col:'#7f77dd'},
-  {title:'Cockroach protocol',lore:'Survival anthem',con:'Cockroach Lady\'s leitmotif. Unmovable 808.',col:'#d85a30'},
-  {title:'Neon frequency',lore:'Waterplant signal',con:'Lepton Mu\'s transmission. Ambient noise as data.',col:'#378add'},
-  {title:'Gold leaf dreams',lore:'Sign painter tribute',con:'LA Trade Tech years. Doc Guthrie in the mix.',col:'#ef9f27'},
-  {title:'Bay to Rogue',lore:'Migration track',con:'The move from Bay Area to Medford. Mac Dre influence.',col:'#1d9e75'},
-  {title:'Canvas Wars anthem',lore:'Event soundtrack',con:'Built to play while paint hits canvas.',col:'#d4537e'},
-];
+        spreadTarget.innerHTML += `
+          <div class="reader-page">
+            <h4 class="rp-head">${page.head}</h4>
+            <div class="rp-art">
+              <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+            </div>
+            <p class="rp-body">${page.body}</p>
+            <div class="pg-num">PAGE ${pageNum}</div>
+          </div>
+        `;
+      });
 
-const RANKS=[{name:'Observer',min:0},{name:'Explorer',min:200},{name:'Creator',min:500},{name:'Builder',min:900},{name:'QuarkMaster',min:1500}];
+      // Update indicator logic text safely
+      const totalSpreads = Math.ceil(zine.pages.length / 2);
+      document.getElementById('reader-page-indicator').innerText = `SPREAD ${currentZinePage + 1} / ${totalSpreads}`;
+      
+      // Update boundaries buttons state 
+      document.getElementById('prev-page-btn').disabled = (currentZinePage === 0);
+      document.getElementById('next-page-btn').disabled = (currentZinePage >= totalSpreads - 1);
+    }
 
-let xp=0,currentChar=null,currentZine=null,currentSpread=0;
+    function changeZinePage(direction) {
+      const zine = ZINES_DATA[currentZineIndex];
+      const totalSpreads = Math.ceil(zine.pages.length / 2);
+      
+      let nextSpread = currentZinePage + direction;
+      if(nextSpread >= 0 && nextSpread < totalSpreads) {
+        currentZinePage = nextSpread;
+        renderZinePages();
+      }
+    }
 
-function go(id){
-  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('sec-'+id).classList.add('active');
-  const ids=['home','chars','zines','qu','challenges','cw','music'];
-  const ni=document.querySelectorAll('.nav-item');
-  const idx=ids.indexOf(id);
-  if(idx>=0)ni[idx].classList.add('active');
-}
+    // --- ACADEMY LOGIC ENGINE ---
+    function completeLesson(element, xpValue) {
+      if(element.hasAttribute('data-completed')) {
+        alert("This module's telemetry data has already been fully calculated.");
+        return;
+      }
 
-function addXP(n){
-  xp+=n;
-  document.getElementById('xp-display').textContent=xp;
-  document.getElementById('qu-xp').textContent=xp;
-  const rank=RANKS.filter(r=>xp>=r.min).pop();
-  const nextRank=RANKS.find(r=>r.min>xp);
-  const pct=nextRank?Math.round((xp-rank.min)/(nextRank.min-rank.min)*100):100;
-  document.getElementById('qu-bar').style.width=pct+'%';
-  const icons=['ti-eye','ti-compass','ti-brush','ti-hammer','ti-crown'];
-  const rankIdx=RANKS.indexOf(rank);
-  document.getElementById('rank-pill').innerHTML=`<i class="ti ${icons[rankIdx]}" aria-hidden="true" style="font-size:13px"></i> ${rank.name}`;
-  RANKS.forEach((r,i)=>{const el=document.getElementById('rs-'+i);if(el){el.className='rank-step'+(xp>=r.min?' done':'');}});
-}
+      // Visual update tag style modifications directly
+      element.setAttribute('data-completed', 'true');
+      element.style.borderColor = 'var(--teal)';
+      element.style.background = 'rgba(47, 143, 111, 0.08)';
+      
+      const titleSpan = element.querySelector('span:first-child');
+      titleSpan.innerHTML = `✓ <span style="text-decoration: line-through;">${titleSpan.innerText}</span>`;
 
-function buildChars(){
-  const g=document.getElementById('char-grid');
-  CHARS.forEach((c,i)=>{
-    const d=document.createElement('div');d.className='char-card';
-    d.innerHTML=`<div class="char-av" style="background:${c.bg};color:${c.col}">${c.name[0]}</div><div class="char-name">${c.name}</div><div class="char-role">${c.role}</div><div class="char-world">${c.world}</div>`;
-    d.onclick=()=>openChar(i);g.appendChild(d);
-  });
-}
+      // Accumulate system points
+      accumulatedAcademyXp += xpValue;
+      
+      // Update Dashboard & Global navigation header arrays synchronously
+      document.getElementById('global-xp').innerText = `${2450 + accumulatedAcademyXp} XP`;
+      document.getElementById('academy-xp-counter').innerText = `${accumulatedAcademyXp} / 800 XP EARNED`;
 
-async function openChar(i){
-  currentChar=CHARS[i];
-  document.getElementById('chars-list-view').style.display='none';
-  document.getElementById('chars-detail-view').style.display='block';
-  document.getElementById('cd-av').style.cssText=`width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:500;flex-shrink:0;background:${currentChar.bg};color:${currentChar.col}`;
-  document.getElementById('cd-av').textContent=currentChar.name[0];
-  document.getElementById('cd-name').textContent=currentChar.name;
-  document.getElementById('cd-role').textContent=currentChar.role;
-  document.getElementById('cd-world').textContent='World: '+currentChar.world;
-  document.getElementById('cd-powers').innerHTML=currentChar.powers.map(p=>`<span class="power">${p}</span>`).join('');
-  document.getElementById('cd-bio').textContent=currentChar.bio;
-  document.getElementById('cd-appears').innerHTML=currentChar.appears.map(a=>`<span style="font-size:11px;padding:2px 7px;border-radius:20px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary)">${a}</span>`).join('');
-  document.getElementById('cd-unlocks').innerHTML=[
-    {icon:'ti-photo',label:'Wallpaper',locked:xp<100},
-    {icon:'ti-pencil',label:'Process sketches',locked:xp<200},
-    {icon:'ti-microphone',label:'Audio log',locked:xp<350},
-    {icon:'ti-notes',label:'Creator notes',locked:xp<500},
-  ].map(u=>`<div class="unlock-item${u.locked?' locked':''}"><i class="ti ${u.icon}" aria-hidden="true"></i>${u.label}${u.locked?'<br><span style="font-size:9px;color:var(--color-text-tertiary)">Earn XP to unlock</span>':''}</div>`).join('');
-  cdTab('profile');
-  const aiEl=document.getElementById('cd-ai');
-  aiEl.className='ai-box loading';aiEl.textContent='Loading lore...';
-  try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system:'You are the lore keeper of the QuarkForce universe — a gritty, imaginative IP world created by artist JawsAtak47 (Anthony Vella), rooted in graffiti, hip-hop (Mac Dre, Mistah FAB, Payroll Giovanni), street art, and 20+ years of independent creative practice. Worlds: Monster Island and Neon Waterplant. Write vivid, editorial lore in 3-4 sentences. No preamble.',messages:[{role:'user',content:`Expand the lore for QuarkForce character: ${currentChar.name}. Role: ${currentChar.role}. World: ${currentChar.world}. Powers: ${currentChar.powers.join(', ')}. Bio: ${currentChar.bio} Go deeper — their inner conflict, their relationship to the universe, what they protect or threaten.`}]})});
-    const d=await r.json();aiEl.className='ai-box';aiEl.textContent=d.content?.[0]?.text||'Lore unavailable.';
-    addXP(25);
-  }catch(e){aiEl.className='ai-box';aiEl.textContent='Lore signal lost. Try again.'}
-}
+      // Update calculations progress layout metrics
+      const maxAcademyXpAvailable = 800;
+      const percentage = Math.min((accumulatedAcademyXp / maxAcademyXpAvailable) * 100, 100);
+      document.getElementById('academy-progress-bar').style.width = `${percentage}%`;
 
-function cdTab(id){
-  document.querySelectorAll('.cd-tab').forEach((t,i)=>{
-    const ids=['profile','media','unlockables','lore'];
-    t.className='cd-tab'+(ids[i]===id?' active':'');
-    document.getElementById('cdp-'+ids[i]).className='cd-pane'+(ids[i]===id?' active':'');
-  });
-}
+      // Rank up flag indicators updates matching thresholds
+      if(accumulatedAcademyXp >= 200) document.getElementById('rank-step-1').classList.add('done');
+      if(accumulatedAcademyXp >= 450) document.getElementById('rank-step-2').classList.add('done');
+      if(accumulatedAcademyXp >= 700) document.getElementById('rank-step-3').classList.add('done');
+    }
 
-function closeCharDetail(){
-  document.getElementById('chars-detail-view').style.display='none';
-  document.getElementById('chars-list-view').style.display='block';
-}
-
-function goDeeper(){
-  if(currentChar)sendPrompt(`Tell me more about ${currentChar.name} in the QuarkForce universe — their full origin, what they want most, who they conflict with, and how they connect to the other characters`);
-}
-
-function buildZines(){
-  const g=document.getElementById('zine-covers');
-  ZINES.forEach((z,i)=>{
-    const d=document.createElement('div');d.className='zine-thumb';
-    d.innerHTML=`<div class="zine-art" style="background:${z.col}18"><i class="ti ti-book-2" aria-hidden="true" style="color:${z.col};font-size:28px"></i></div><div class="zine-num">${z.num}</div><div class="zine-tit">${z.title}</div>`;
-    d.onclick=()=>openZine(i);g.appendChild(d);
-  });
-}
-
-async function openZine(i){
-  currentZine=i;currentSpread=0;
-  document.getElementById('zine-library').style.display='none';
-  document.getElementById('zine-reader').style.display='block';
-  renderSpread();addXP(30);
-}
-
-function renderSpread(){
-  const z=ZINES[currentZine];const s=z.spreads[currentSpread]||z.spreads[0];
-  document.getElementById('r-num').textContent=z.num;
-  document.getElementById('r-title').textContent=z.title;
-  document.getElementById('r-pg-lbl').textContent=`Spread ${currentSpread+1} of ${z.spreads.length}`;
-  document.getElementById('r-left').innerHTML=`<div class="rp-head">${s.lh}</div><div class="rp-art" style="background:${ZINES[currentZine].col}15"><i class="ti ti-photo" aria-hidden="true"></i></div><div style="white-space:pre-line">${s.lb}</div><span class="pg-num">${currentSpread*2+1}</span>`;
-  document.getElementById('r-right').innerHTML=`<div class="rp-head">${s.rh}</div><div class="rp-art" style="background:${ZINES[currentZine].col}10"><i class="ti ti-photo" aria-hidden="true"></i></div><div style="white-space:pre-line">${s.rb}</div><span class="pg-num">${currentSpread*2+2}</span>`;
-  document.getElementById('r-commentary').className='ai-box';
-  document.getElementById('r-commentary').textContent='"'+s.commentary+'" — JawsAtak47';
-  const cl=document.getElementById('r-charlinks');
-  cl.innerHTML=ZINES[currentZine].chars.map(cn=>`<span class="char-link" onclick="goChar('${cn}')"><i class="ti ti-user-star" aria-hidden="true" style="font-size:11px"></i>${cn}</span>`).join('');
-}
-
-function goChar(name){
-  const idx=CHARS.findIndex(c=>c.name===name);
-  if(idx>=0){go('chars');setTimeout(()=>openChar(idx),50);}
-}
-
-function pg(dir){
-  if(currentZine===null)return;
-  const z=ZINES[currentZine];
-  currentSpread=Math.max(0,Math.min(z.spreads.length-1,currentSpread+dir));
-  renderSpread();
-}
-
-function closeReader(){
-  document.getElementById('zine-reader').style.display='none';
-  document.getElementById('zine-library').style.display='block';
-}
-
-function buildQU(){
-  const g=document.getElementById('qu-schools-grid');
-  QU_SCHOOLS.forEach(s=>{
-    const d=document.createElement('div');d.className='school';
-    const courses=s.courses.map(c=>`<div class="lesson-row${c.free?'':' premium'}" onclick="completeLesson(${c.xp},${c.free})"><span>${c.name}</span>${c.free?`<span class="xp-tag">+${c.xp} XP</span>`:`<span class="lock-tag"><i class="ti ti-lock" aria-hidden="true" style="font-size:10px"></i> QU+</span>`}</div>`).join('');
-    d.innerHTML=`<div class="school-head"><div class="school-icon"><i class="ti ${s.icon}" aria-hidden="true"></i></div><div><div class="school-name">${s.name}</div><div class="school-count">${s.courses.length} courses</div></div></div>${courses}`;
-    g.appendChild(d);
-  });
-}
-
-function completeLesson(xpAmt,free){
-  if(!free)return sendPrompt('Tell me more about QuarkUniversity+ — what courses are available, how does the XP system work, and what does QuarkMaster rank unlock?');
-  addXP(xpAmt);
-}
-
-function buildChallenges(){
-  const g=document.getElementById('challenge-grid');
-  CHALLENGES.forEach(c=>{
-    const d=document.createElement('div');d.className='challenge-card';
-    d.innerHTML=`<div class="ch-status ${c.status}">${c.status==='live'?'LIVE NOW':'UPCOMING'}</div><div class="ch-title">${c.title}</div><div class="ch-desc">${c.desc}</div><div class="ch-rewards">${c.rewards.map(r=>`<span class="reward-tag">${r}</span>`).join('')}</div>${c.status==='live'?`<button class="btn p sm" style="margin-top:12px;width:100%" onclick="joinChallenge('${c.title}',${c.xp})">Join — +${c.xp} XP ↗</button>`:'<div style="font-size:11px;color:var(--color-text-tertiary);margin-top:10px">Opening soon</div>'}`;
-    g.appendChild(d);
-  });
-}
-
-function joinChallenge(title,xpAmt){
-  addXP(xpAmt);
-  sendPrompt(`I want to join the "${title}" challenge in Canvas Wars / QuarkForce. Help me brainstorm my concept and what I should create.`);
-}
-
-function buildMusic(){
-  const g=document.getElementById('music-grid');
-  TRACKS.forEach(t=>{
-    const d=document.createElement('div');d.className='track';
-    d.innerHTML=`<div class="track-art" style="background:${t.col}18"><i class="ti ti-music bg" aria-hidden="true" style="color:${t.col}"></i><i class="ti ti-player-play track-play" aria-hidden="true" style="color:${t.col}"></i></div><div class="track-info"><div class="track-title">${t.title}</div><div class="track-sub">JawsAtak47</div><div class="track-lore">${t.lore}</div></div>`;
-    g.appendChild(d);
-  });
-}
-
-const SYS={
-  oracle:'You are the QuarkForce Oracle — omniscient voice of the QuarkForce universe created by JawsAtak47 (Anthony Vella), a multidisciplinary artist, zine publisher, event producer, musician, and educator based in Medford, OR. He operates from Timeless Treasures Hub and OH\'s Osaka as a teppanyaki cook. The QuarkForce ecosystem includes: Characters (BlackPacalyps, TinySquatchMan, Lepton Mu, Cockroach Lady, Xiangba, Bugaboo, Marvelous Wonderful, Duct TapeMan, Infinite Infant). Worlds: Monster Island and Neon Waterplant. Events: Canvas Wars Year 1 (Miles won 8pts), MonsTober coming. Education: QuarkUniversity (160 classes, 10 schools, XP rank system Observer→Explorer→Creator→Builder→QuarkMaster). Music: JawsAtak47 discography rooted in Bay Area/Detroit hip-hop. Brand: QuarkForce umbrella includes QuarkZine (6+ issues), Canvas Wars, QuarkUniversity. Answer vividly, authoritatively, and concisely.',
-  tutor:'You are the QuarkUniversity tutor — an expert art educator founded by JawsAtak47, who trained in sign painting and gold leaf at LA Trade Tech under Doc Guthrie, Noel B. Webber, and Joby Carter. He has 20+ years in graffiti, hip-hop, and street art. QuarkUniversity teaches: lettering, graffiti, character design, mural painting, gold leaf, sign painting, zine production, and business for independent artists. Be direct, practical, encouraging. Keep answers actionable and specific.',
-  music:'You are the music archivist for JawsAtak47 — an independent artist/musician from Medford, OR rooted in Bay Area hip-hop (Mac Dre, Mistah FAB) and Detroit (Payroll Giovanni). Every track in his catalog is universe lore for QuarkForce. Answer questions about the music, production, influences, and how the sound connects to characters and worlds. Be specific, vivid, knowledgeable. Treat the music as canon — as important as the visual art.'
-};
-
-async function chat(mode){
-  const inputEl=document.getElementById(mode==='oracle'?'oracle-q':mode==='tutor'?'tutor-q':'music-q');
-  const msgsEl=document.getElementById(mode==='oracle'?'oracle-msgs':mode==='tutor'?'tutor-msgs':'music-msgs');
-  const q=inputEl.value.trim();if(!q)return;
-  inputEl.value='';
-  const um=document.createElement('div');um.className='msg-u';um.textContent=q;msgsEl.appendChild(um);
-  const lm=document.createElement('div');lm.className='msg-load';lm.textContent='Thinking...';msgsEl.appendChild(lm);
-  msgsEl.scrollTop=msgsEl.scrollHeight;
-  try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system:SYS[mode],messages:[{role:'user',content:q}]})});
-    const d=await r.json();
-    lm.className='msg-a';lm.textContent=d.content?.[0]?.text||'No response.';
-  }catch(e){lm.className='msg-a';lm.textContent='Connection error.'}
-  msgsEl.scrollTop=msgsEl.scrollHeight;
-}
-
-buildChars();buildZines();buildQU();buildChallenges();buildMusic();
-</script>
+    // --- AUDIO SIMULATION FEEDBACK ---
+    function playMockTrack(name, frequency) {
+      alert(`[TRANSMITTER SYNC] Connected to channel: "${name}" at ${frequency}. Audio pipeline baseline verified.`);
+    }
+  </script>
+</body>
+</html>
